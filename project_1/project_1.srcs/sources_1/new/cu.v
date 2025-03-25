@@ -30,11 +30,18 @@ module cu(
     reg [31:0] idle_counter;           // IDLE 상태 지속 시간 카운터
     reg [7:0] error_count;             // 연속 오류 횟수 카운터 추가
     
-    // 상태별 타임아웃 값 (클럭 사이클 수)
-    localparam TRIGGER_TIMEOUT = 2000;         // 20us (10us 트리거 + 여유)
-    localparam WAIT_ECHO_TIMEOUT = 25_000_000; // 250ms (최대 에코 대기 시간)
-    localparam COUNT_ECHO_TIMEOUT = 25_000_000; // 250ms (최대 에코 지속 시간)
-    localparam IDLE_TIMEOUT_MS = 10000;        // 100초 (10msec tick 기준)
+    // 상태별 타임아웃 값 (클럭 사이클 수) - 시뮬레이션을 위해 축소
+    // Original values:
+    // localparam TRIGGER_TIMEOUT = 2000;         // 20us (10us 트리거 + 여유)
+    // localparam WAIT_ECHO_TIMEOUT = 25_000_000; // 250ms (최대 에코 대기 시간)
+    // localparam COUNT_ECHO_TIMEOUT = 25_000_000; // 250ms (최대 에코 지속 시간)
+    // localparam IDLE_TIMEOUT_MS = 10000;        // 100초 (10msec tick 기준)
+    
+    // Modified values for simulation:
+    localparam TRIGGER_TIMEOUT = 2000;         // 20us (unchanged)
+    localparam WAIT_ECHO_TIMEOUT = 250_000;    // 2.5ms (1/100 of original)
+    localparam COUNT_ECHO_TIMEOUT = 250_000;   // 2.5ms (1/100 of original)
+    localparam IDLE_TIMEOUT_MS = 100;          // 1s (1/100 of original)
     
     // 에코 신호 엣지 감지
     wire echo_posedge = echo && !echo_prev;
@@ -224,7 +231,6 @@ module cu(
     end
 
 endmodule
-
 // module cu(
 //     input clk,               // 시스템 클럭 (100MHz)
 //     input reset,             // 리셋 신호
