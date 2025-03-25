@@ -1,4 +1,3 @@
-// CU 모듈에 FSM 상태 감시 로직 추가
 module cu(
     input clk,               // 시스템 클럭 (100MHz)
     input reset,             // 리셋 신호
@@ -23,11 +22,13 @@ module cu(
     reg [1:0] next_state;
     reg [1:0] prev_state;    // 이전 상태 저장용
     reg [31:0] counter;
+    reg [31:0] cycle_counter;    // 측정 사이클 카운터 추가
     reg echo_prev;           // 에코 신호의 이전 값
     
     // 상태 모니터링을 위한 레지스터
     reg [31:0] state_timeout_counter;  // 상태 타임아웃 카운터
     reg [31:0] idle_counter;           // IDLE 상태 지속 시간 카운터
+    reg [7:0] error_count;             // 연속 오류 횟수 카운터 추가
     
     // 상태별 타임아웃 값 (클럭 사이클 수)
     localparam TRIGGER_TIMEOUT = 2000;         // 20us (10us 트리거 + 여유)
@@ -45,10 +46,20 @@ module cu(
             current_state <= IDLE;
             echo_prev <= 0;
             prev_state <= IDLE;
+            cycle_counter <= 0;
         end else begin
             prev_state <= current_state;
             current_state <= next_state;
             echo_prev <= echo;
+            
+            // 측정 사이클 완료시 카운터 증가
+            if (current_state == COUNT_ECHO && next_state == IDLE) begin
+                cycle_counter <= cycle_counter + 1;
+                
+                // 1000번 측정 후에는 카운터 리셋
+                if (cycle_counter >= 999)
+                    cycle_counter <= 0;
+            end
         end
     end
 
@@ -98,6 +109,7 @@ module cu(
             state_timeout_counter <= 0;
             idle_counter <= 0;
             fsm_error <= 0;
+            error_count <= 0;
         end else begin
             // 상태가 변경되면 타임아웃 카운터 리셋
             if (current_state != prev_state) begin
@@ -123,18 +135,21 @@ module cu(
                 TRIGGER: begin
                     if (state_timeout_counter >= TRIGGER_TIMEOUT) begin
                         fsm_error <= 1;  // TRIGGER 상태 타임아웃
+                        error_count <= error_count + 1;
                     end
                 end
                 
                 WAIT_ECHO: begin
                     if (state_timeout_counter >= WAIT_ECHO_TIMEOUT) begin
                         fsm_error <= 1;  // WAIT_ECHO 상태 타임아웃
+                        error_count <= error_count + 1;
                     end
                 end
                 
                 COUNT_ECHO: begin
                     if (state_timeout_counter >= COUNT_ECHO_TIMEOUT) begin
                         fsm_error <= 1;  // COUNT_ECHO 상태 타임아웃
+                        error_count <= error_count + 1;
                     end
                 end
                 
@@ -146,6 +161,13 @@ module cu(
             // 오류가 발생했을 때 오류 LED 깜빡임 또는 리셋 로직을 추가할 수 있음
             if (btn_start) begin
                 fsm_error <= 0;  // 버튼을 누르면 오류 상태 클리어
+                if (error_count > 0)
+                    error_count <= error_count - 1;
+            end
+            
+            // 연속 오류가 5회 이상이면 시스템 상태 강제 리셋
+            if (error_count >= 5) begin
+                fsm_error <= 1;
             end
         end
     end
@@ -202,9 +224,6 @@ module cu(
     end
 
 endmodule
-
-
-
 
 // module cu(
 //     input clk,               // 시스템 클럭 (100MHz)
