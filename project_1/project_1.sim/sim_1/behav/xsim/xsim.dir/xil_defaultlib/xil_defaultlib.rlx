@@ -1,0 +1,12 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sim_1/new/tb.v,1742877451,verilog,,,,tb_ultrasonic_distance_meter,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/cu.v,1742879129,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/dp.v,,cu,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/dp.v,1742870187,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/fnd.v,,dp,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/fnd.v,1742870179,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/led_indi.v,,bcdtoseg;clk_divider;counter_8;decoder_3x8;digit_splitter;dot_module;fnd_controller;mux_2x1;mux_8x1,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/led_indi.v,1742872117,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/tick_generator.v,,led_controller,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/tick_generator.v,1742871180,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/top.v,,tick_generator,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/top.v,1742872129,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sim_1/new/tb.v,,ultrasonic_distance_meter,,,,,,,,

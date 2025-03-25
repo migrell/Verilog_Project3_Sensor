@@ -1,0 +1,15 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../project_1.srcs/sources_1/new/cu.v" \
+"../../../../project_1.srcs/sources_1/new/dp.v" \
+"../../../../project_1.srcs/sources_1/new/fnd.v" \
+"../../../../project_1.srcs/sources_1/new/led_indi.v" \
+"../../../../project_1.srcs/sources_1/new/tick_generator.v" \
+"../../../../project_1.srcs/sources_1/new/top.v" \
+"../../../../project_1.srcs/sim_1/new/tb.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

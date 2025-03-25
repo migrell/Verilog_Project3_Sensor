@@ -1,0 +1,28 @@
+Vivado Simulator 2020.2
+Copyright 1986-1999, 2001-2020 Xilinx, Inc. All Rights Reserved.
+Running: C:/Xilinx/Vivado/2020.2/bin/unwrapped/win64.o/xelab.exe -wto 22c392b0878a4c35ab6d1c0ac3d3dd0d --incr --debug typical --relax --mt 2 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot tb_ultrasonic_distance_meter_behav xil_defaultlib.tb_ultrasonic_distance_meter xil_defaultlib.glbl -log elaborate.log 
+Using 2 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4100] "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.sim/sim_1/behav/xsim/glbl.v" Line 6. Module glbl has a timescale but at least one module in design doesn't have timescale.
+WARNING: [XSIM 43-4100] "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.sim/sim_1/behav/xsim/glbl.v" Line 6. Module glbl has a timescale but at least one module in design doesn't have timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.tick_generator
+Compiling module xil_defaultlib.led_controller
+Compiling module xil_defaultlib.cu
+Compiling module xil_defaultlib.dp
+Compiling module xil_defaultlib.clk_divider
+Compiling module xil_defaultlib.counter_8
+Compiling module xil_defaultlib.decoder_3x8
+Compiling module xil_defaultlib.digit_splitter
+Compiling module xil_defaultlib.digit_splitter(BIT_WIDTH=6)
+Compiling module xil_defaultlib.digit_splitter(BIT_WIDTH=5)
+Compiling module xil_defaultlib.bcdtoseg
+Compiling module xil_defaultlib.fnd_controller
+Compiling module xil_defaultlib.ultrasonic_distance_meter
+Compiling module xil_defaultlib.tb_ultrasonic_distance_meter
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot tb_ultrasonic_distance_meter_behav

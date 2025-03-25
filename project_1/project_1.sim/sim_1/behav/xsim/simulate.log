@@ -1,0 +1,62 @@
+Vivado Simulator 2020.2
+Time resolution is 1 ps
+Time		Reset	Btn	Trigger	Echo	LED	Timeout
+Time=100000 ns: Applying RESET
+Time=200000 ns: Released RESET
+Time=2200000 ns: Starting normal measurement test (20cm)
+Time=2215000 ns: Trigger detected HIGH
+Time=4200000 ns: Button released
+10000000 ns	0	0	1	0	0010	0
+Time=12215000 ns: Trigger detected LOW
+Time=12815000 ns: Starting ECHO pulse for 20cm
+20000000 ns	0	0	0	1	0100	0
+30000000 ns	0	0	0	1	0100	0
+Time=36015000 ns: ECHO pulse ended
+40000000 ns	0	0	0	0	0100	0
+50000000 ns	0	0	0	0	0100	0
+60000000 ns	0	0	0	0	0100	0
+Time=64200000 ns: Starting second measurement test
+70000000 ns	0	0	0	0	0100	0
+80000000 ns	0	0	0	0	0100	0
+90000000 ns	0	0	0	0	0100	0
+100000000 ns	0	0	0	0	0100	0
+110000000 ns	0	0	0	0	0100	0
+120000000 ns	0	0	0	0	0100	0
+Time=126200000 ns: Starting timeout test - disabling echo
+130000000 ns	0	0	0	0	0100	0
+140000000 ns	0	0	0	0	0100	0
+150000000 ns	0	0	0	0	0100	0
+160000000 ns	0	0	0	0	0100	0
+170000000 ns	0	0	0	0	0100	0
+180000000 ns	0	0	0	0	0100	0
+190000000 ns	0	0	0	0	0100	0
+200000000 ns	0	0	0	0	0100	0
+210000000 ns	0	0	0	0	0100	0
+220000000 ns	0	0	0	0	0100	0
+230000000 ns	0	0	0	0	0100	0
+240000000 ns	0	0	0	0	0100	0
+Time=248200000 ns: Testing error recovery
+250000000 ns	0	1	0	0	0100	0
+260000000 ns	0	0	0	0	0100	0
+270000000 ns	0	0	0	0	0100	0
+280000000 ns	0	0	0	0	0100	0
+290000000 ns	0	0	0	0	0100	0
+300000000 ns	0	0	0	0	0100	0
+310000000 ns	0	0	0	0	0100	0
+Time=310200000 ns: Testing reset during measurement
+320000000 ns	0	0	0	0	0100	0
+Time=322300000 ns: Applied reset during measurement
+330000000 ns	0	0	0	0	0001	0
+Time=332315000 ns: Trigger detected HIGH
+340000000 ns	0	0	1	0	0010	0
+Time=342315000 ns: Trigger detected LOW
+Time=342915000 ns: Starting ECHO pulse for 20cm
+350000000 ns	0	0	0	1	0100	0
+360000000 ns	0	0	0	1	0100	0
+Time=366115000 ns: ECHO pulse ended
+370000000 ns	0	0	0	0	0100	0
+380000000 ns	0	0	0	0	0100	0
+390000000 ns	0	0	0	0	0100	0
+Time=394300000 ns: Simulation complete
+400000000 ns	0	0	0	0	0100	0
+$finish called at time : 404300 ns : File "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sim_1/new/tb.v" Line 209

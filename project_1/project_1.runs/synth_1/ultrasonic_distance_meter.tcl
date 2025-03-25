@@ -70,7 +70,9 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param synth.incrementalSynthesisCache C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/.Xil/Vivado-15544-DESKTOP-7CFQ9ND/incrSyn
+set_param chipscope.maxJobs 4
+set_param synth.incrementalSynthesisCache C:/Users/kccistc/AppData/Roaming/Xilinx/Vivado/.Xil/Vivado-11884-DESKTOP-7CFQ9ND/incrSyn
+set_param xicom.use_bs_reader 1
 set_msg_config -id {Synth 8-256} -limit 10000
 set_msg_config -id {Synth 8-638} -limit 10000
 OPTRACE "Creating in-memory project" START { }
@@ -90,6 +92,7 @@ set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
+  C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/btn_debounce.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/cu.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/dp.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/fnd.v

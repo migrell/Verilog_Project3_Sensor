@@ -1,0 +1,22 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/cu.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cu
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/dp.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dp
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/fnd.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fnd_controller
+INFO: [VRFC 10-311] analyzing module clk_divider
+INFO: [VRFC 10-311] analyzing module counter_8
+INFO: [VRFC 10-311] analyzing module decoder_3x8
+INFO: [VRFC 10-311] analyzing module digit_splitter
+INFO: [VRFC 10-311] analyzing module mux_8x1
+INFO: [VRFC 10-311] analyzing module bcdtoseg
+INFO: [VRFC 10-311] analyzing module mux_2x1
+INFO: [VRFC 10-311] analyzing module dot_module
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/led_indi.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module led_controller
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/tick_generator.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tick_generator
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ultrasonic_distance_meter
+INFO: [VRFC 10-2263] Analyzing Verilog file "C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sim_1/new/tb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tb_ultrasonic_distance_meter
