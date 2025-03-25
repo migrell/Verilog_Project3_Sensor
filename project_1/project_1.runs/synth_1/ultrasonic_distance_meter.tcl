@@ -70,7 +70,7 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param synth.incrementalSynthesisCache C:/Users/kccistc/AppData/Roaming/Xilinx/Vivado/.Xil/Vivado-16020-DESKTOP-7CFQ9ND/incrSyn
+set_param synth.incrementalSynthesisCache C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/.Xil/Vivado-15544-DESKTOP-7CFQ9ND/incrSyn
 set_msg_config -id {Synth 8-256} -limit 10000
 set_msg_config -id {Synth 8-638} -limit 10000
 OPTRACE "Creating in-memory project" START { }
@@ -93,6 +93,7 @@ read_verilog -library xil_defaultlib {
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/cu.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/dp.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/fnd.v
+  C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/led_indi.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/tick_generator.v
   C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_1/project_1.srcs/sources_1/new/top.v
 }
