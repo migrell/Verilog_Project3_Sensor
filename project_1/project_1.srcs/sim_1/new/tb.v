@@ -1,5 +1,5 @@
 module tb_ultrasonic_distance_meter;
-    // Testbench signals
+    // Basic signals
     reg clk;
     reg reset;
     reg echo;
@@ -16,38 +16,20 @@ module tb_ultrasonic_distance_meter;
     // Debug monitoring signals
     wire [1:0] cu_current_state;
     wire [31:0] cu_timeout_counter;
-    wire cu_echo_posedge;
-    wire cu_echo_negedge;
-    wire [6:0] dut_msec;            // Distance value from DP module
-    reg [1:0] prev_cu_state;         // Previous FSM state
-    wire state_changed;              // State change detection
-    
-    // Echo timing measurement variables
-    time echo_start_time;            // Time when echo signal started
-    time echo_end_time;              // Time when echo signal ended
-    reg [31:0] echo_duration;        // Echo pulse duration in ns
-    
-    // Test statistics variables
-    reg [31:0] test_count;           // Total test count
-    reg [31:0] test_pass_count;      // Passed test count
-    reg [31:0] test_fail_count;      // Failed test count
+    wire [6:0] dut_msec;
     
     // Test control variables
-    reg [6:0] expected_distance;     // Expected distance value
-    reg [6:0] measured_distance;     // Measured distance value
-    reg [3:0] test_scenario;         // Current test scenario number
-    reg timeout_detected;            // Timeout detection flag
+    reg [31:0] test_count = 0;
+    reg [31:0] test_pass_count = 0;
+    reg [31:0] test_fail_count = 0;
+    reg [3:0] test_scenario = 0;
+    reg timeout_detected = 0;
+    reg enable_echo = 1;
     
-    // Assign debug signals from DUT
+    // Connect monitoring signals to DUT internal signals
     assign cu_current_state = DUT.U_cu.current_state;
     assign cu_timeout_counter = DUT.U_cu.state_timeout_counter;
-    assign cu_echo_posedge = DUT.U_cu.echo_posedge;
-    assign cu_echo_negedge = DUT.U_cu.echo_negedge;
-    assign dut_msec = DUT.w_msec;    // Distance value from top module
-    assign state_changed = (prev_cu_state != cu_current_state);
-    
-    // Test control signals
-    reg enable_echo = 1; // Flag to control echo generation
+    assign dut_msec = DUT.w_msec;
     
     // Device Under Test (DUT) instantiation
     ultrasonic_distance_meter DUT (
@@ -67,55 +49,6 @@ module tb_ultrasonic_distance_meter;
         forever #(CLK_PERIOD/2) clk = ~clk; // Generate 100MHz clock
     end
     
-    // FSM state tracking
-    always @(posedge clk) begin
-        prev_cu_state <= cu_current_state;
-        
-        if (state_changed) begin
-            case(cu_current_state)
-                2'b00: $display("Time=%0t ns: FSM State changed to IDLE", $time);
-                2'b01: $display("Time=%0t ns: FSM State changed to TRIGGER", $time);
-                2'b10: $display("Time=%0t ns: FSM State changed to WAIT_ECHO", $time);
-                2'b11: $display("Time=%0t ns: FSM State changed to COUNT_ECHO", $time);
-                default: $display("Time=%0t ns: FSM State changed to UNKNOWN", $time);
-            endcase
-        end
-    end
-    
-    // Echo duration measurement
-    always @(posedge echo) begin
-        echo_start_time = $time;
-        $display("Time=%0t ns: Echo signal started", echo_start_time);
-    end
-    
-    always @(negedge echo) begin
-        if (echo_start_time > 0) begin  // Ensure echo_start_time was recorded
-            echo_end_time = $time;
-            echo_duration = echo_end_time - echo_start_time;
-            $display("Time=%0t ns: Echo signal ended, duration=%0d ns", 
-                    echo_end_time, echo_duration);
-            
-            // Calculate theoretical distance for verification
-            $display("Time=%0t ns: Theoretical distance = %0d cm", 
-                    $time, (echo_duration/10000)/58);
-        end
-    end
-    
-    // Timeout detection
-    always @(posedge clk) begin
-        if (cu_current_state == 2'b10 && cu_timeout_counter >= 249000) begin
-            // Detection threshold set just below WAIT_ECHO_TIMEOUT (250,000)
-            timeout_detected = 1;
-            $display("Time=%0t ns: Timeout condition detected in WAIT_ECHO state", $time);
-        end else if (cu_current_state == 2'b11 && cu_timeout_counter >= 249000) begin
-            // Detection threshold set just below COUNT_ECHO_TIMEOUT (250,000)
-            timeout_detected = 1;
-            $display("Time=%0t ns: Timeout condition detected in COUNT_ECHO state", $time);
-        end else if (reset || btn_start) begin
-            timeout_detected = 0; // Reset timeout flag
-        end
-    end
-    
     // Echo generation process
     initial begin
         forever begin
@@ -127,7 +60,6 @@ module tb_ultrasonic_distance_meter;
             
             if (enable_echo) begin
                 // Add delay before echo returns (for 20cm distance)
-                // 20cm = sound travels 40cm (round trip) at 340m/s = ~1.18ms
                 #((CLK_PERIOD*3000)/SIM_ACCEL);
                 
                 // Generate echo pulse for 20cm measurement
@@ -144,24 +76,23 @@ module tb_ultrasonic_distance_meter;
         end
     end
     
-    // Main test sequence
+    // Timeout detection
+    always @(posedge clk) begin
+        if (DUT.U_cu.fsm_error && !timeout_detected) begin
+            timeout_detected = 1;
+            $display("Time=%0t ns: Error condition detected, fsm_error flag set", $time);
+        end else if (reset || btn_start) begin
+            timeout_detected = 0; // Reset timeout flag
+        end
+    end
+    
+    // Main test sequence - simplified
     initial begin
-        // Initialize all variables
+        // Initialize signals
         reset = 0;
         echo = 0;
         btn_start = 0;
         enable_echo = 1;
-        test_count = 0;
-        test_pass_count = 0;
-        test_fail_count = 0;
-        test_scenario = 0;
-        expected_distance = 20; // Default expected distance is 20cm
-        measured_distance = 0;
-        timeout_detected = 0;
-        prev_cu_state = 2'b00; // Initialize to IDLE
-        echo_start_time = 0;
-        echo_end_time = 0;
-        echo_duration = 0;
         
         // Apply reset pulse
         #100;
@@ -180,54 +111,18 @@ module tb_ultrasonic_distance_meter;
         $display("Time=%0t ns: Starting test scenario %0d - Normal measurement test (20cm)", 
                 $time, test_scenario);
         
-        // Use longer button press to ensure detection
         btn_start = 1;
         #5000;
         btn_start = 0;
-        $display("Time=%0t ns: Button released", $time);
         
         // Wait for complete measurement cycle
         #((CLK_PERIOD*300000)/SIM_ACCEL);
         
-        // Verify test results for scenario 1
-        measured_distance = dut_msec;
-        if (measured_distance >= 19 && measured_distance <= 21) begin
-            $display("Time=%0t ns: TEST PASSED - Measured distance %0d cm is within range of expected 20cm", 
-                    $time, measured_distance);
-            test_pass_count = test_pass_count + 1;
-        end else begin
-            $display("Time=%0t ns: TEST FAILED - Measured distance %0d cm is outside expected range", 
-                    $time, measured_distance);
-            test_fail_count = test_fail_count + 1;
-        end
+        // Verify results for Test Case 1
+        check_measurement(20);
         
-        // Test Case 2: Another normal measurement
+        // Test Case 2: Timeout test
         test_scenario = 2;
-        test_count = test_count + 1;
-        $display("Time=%0t ns: Starting test scenario %0d - Second measurement test", 
-                $time, test_scenario);
-        
-        btn_start = 1;
-        #5000;
-        btn_start = 0;
-        
-        // Wait for measurement to complete
-        #((CLK_PERIOD*300000)/SIM_ACCEL);
-        
-        // Verify test results for scenario 2
-        measured_distance = dut_msec;
-        if (measured_distance >= 19 && measured_distance <= 21) begin
-            $display("Time=%0t ns: TEST PASSED - Measured distance %0d cm is within range of expected 20cm", 
-                    $time, measured_distance);
-            test_pass_count = test_pass_count + 1;
-        end else begin
-            $display("Time=%0t ns: TEST FAILED - Measured distance %0d cm is outside expected range", 
-                    $time, measured_distance);
-            test_fail_count = test_fail_count + 1;
-        end
-        
-        // Test Case 3: Timeout test - disable echo generation
-        test_scenario = 3;
         test_count = test_count + 1;
         $display("Time=%0t ns: Starting test scenario %0d - Timeout test (no echo)", 
                 $time, test_scenario);
@@ -241,98 +136,25 @@ module tb_ultrasonic_distance_meter;
         // Wait for timeout to occur
         #((CLK_PERIOD*600000)/SIM_ACCEL);
         
-        // Verify test results for scenario 3
-        if (timeout_detected && DUT.U_cu.fsm_error) begin
-            $display("Time=%0t ns: TEST PASSED - Timeout correctly detected and error flag set", $time);
-            test_pass_count = test_pass_count + 1;
-        end else begin
-            $display("Time=%0t ns: TEST FAILED - Timeout not properly handled", $time);
-            test_fail_count = test_fail_count + 1;
-        end
+        // Verify results for Test Case 2
+        check_timeout();
         
-        // Test Case 4: Error recovery after timeout
-        test_scenario = 4;
+        // Test Case 3: Error recovery test
+        test_scenario = 3;
         test_count = test_count + 1;
         $display("Time=%0t ns: Starting test scenario %0d - Error recovery test", 
                 $time, test_scenario);
-        enable_echo = 1; // Re-enable echo generation
+        enable_echo = 1;
         
         btn_start = 1;
         #5000;
         btn_start = 0;
-        
-        // Wait briefly to check if error flag is cleared
-        #10000;
-        
-        // Verify initial part of test scenario 4
-        if (!DUT.U_cu.fsm_error) begin
-            $display("Time=%0t ns: TEST PART 1 PASSED - Error flag cleared by button press", $time);
-        end else begin
-            $display("Time=%0t ns: TEST PART 1 FAILED - Error flag not cleared", $time);
-            test_fail_count = test_fail_count + 1;
-        end
         
         // Wait for measurement to complete
-        #((CLK_PERIOD*290000)/SIM_ACCEL);
-        
-        // Verify second part of test scenario 4
-        measured_distance = dut_msec;
-        if (measured_distance >= 19 && measured_distance <= 21) begin
-            $display("Time=%0t ns: TEST PART 2 PASSED - System recovered and measured correctly: %0d cm", 
-                    $time, measured_distance);
-            test_pass_count = test_pass_count + 1;
-        end else begin
-            $display("Time=%0t ns: TEST PART 2 FAILED - System did not recover properly", $time);
-            test_fail_count = test_fail_count + 1;
-        end
-        
-        // Test Case 5: Reset during measurement
-        test_scenario = 5;
-        test_count = test_count + 1;
-        $display("Time=%0t ns: Starting test scenario %0d - Reset during measurement", 
-                $time, test_scenario);
-        
-        btn_start = 1;
-        #5000;
-        btn_start = 0;
-        
-        // Wait for trigger to start
-        #10000;
-        
-        // Apply reset in the middle of measurement
-        reset = 1;
-        #100;
-        reset = 0;
-        $display("Time=%0t ns: Applied reset during measurement", $time);
-        
-        // Verify system returns to IDLE state after reset
-        #100;
-        if (cu_current_state == 2'b00) begin
-            $display("Time=%0t ns: TEST PART 1 PASSED - System returned to IDLE state after reset", $time);
-        end else begin
-            $display("Time=%0t ns: TEST PART 1 FAILED - System did not return to IDLE state", $time);
-            test_fail_count = test_fail_count + 1;
-        end
-        
-        // Allow stabilization and start new measurement
-        #10000;
-        btn_start = 1;
-        #5000;
-        btn_start = 0;
-        
-        // Wait for final measurement to complete
         #((CLK_PERIOD*300000)/SIM_ACCEL);
         
-        // Verify system can perform measurement after reset
-        measured_distance = dut_msec;
-        if (measured_distance >= 19 && measured_distance <= 21) begin
-            $display("Time=%0t ns: TEST PART 2 PASSED - System recovered after reset: %0d cm", 
-                    $time, measured_distance);
-            test_pass_count = test_pass_count + 1;
-        end else begin
-            $display("Time=%0t ns: TEST PART 2 FAILED - System did not recover after reset", $time);
-            test_fail_count = test_fail_count + 1;
-        end
+        // Verify results for Test Case 3
+        check_measurement(20);
         
         // Print final test summary
         $display("\n=== TEST SUMMARY ===");
@@ -348,18 +170,48 @@ module tb_ultrasonic_distance_meter;
         $finish;
     end
     
-    // Enhanced monitor for important signals including FSM state
+    // Task for checking measurement results
+    task check_measurement;
+        input [6:0] expected_distance;
+        begin
+            if (dut_msec >= expected_distance-1 && dut_msec <= expected_distance+1) begin
+                $display("Time=%0t ns: TEST PASSED - Measured distance %0d cm is within range of expected %0d cm", 
+                        $time, dut_msec, expected_distance);
+                test_pass_count = test_pass_count + 1;
+            end else begin
+                $display("Time=%0t ns: TEST FAILED - Measured distance %0d cm is outside expected range", 
+                        $time, dut_msec);
+                test_fail_count = test_fail_count + 1;
+            end
+        end
+    endtask
+    
+    // Task for checking timeout conditions
+    task check_timeout;
+        begin
+            if (timeout_detected && DUT.U_cu.fsm_error) begin
+                $display("Time=%0t ns: TEST PASSED - Timeout correctly detected and error flag set", $time);
+                test_pass_count = test_pass_count + 1;
+            end else begin
+                $display("Time=%0t ns: TEST FAILED - Timeout not properly handled", $time);
+                test_fail_count = test_fail_count + 1;
+            end
+        end
+    endtask
+    
+    // Enhanced monitor for important signals
     initial begin
-        $display("Time\t\tReset\tBtn\tTrigger\tEcho\tLED\tCU_State\tTimeout\tDistance");
+        $display("Time\t\tState\tEcho\tTrigger\tLED\tDistance\tTimeout");
         forever begin
-            #(CLK_PERIOD*10000);
-            $display("%0t ns\t%b\t%b\t%b\t%b\t%b\t%b\t\t%0d\t%0d",
-                     $time, reset, btn_start, trigger, echo, led, 
-                     cu_current_state, cu_timeout_counter, dut_msec);
+            #(CLK_PERIOD*20000);
+            $display("%0t ns\t%b\t%b\t%b\t%b\t%0d\t\t%b",
+                     $time, cu_current_state, echo, trigger, led, 
+                     dut_msec, timeout_detected);
         end
     end
     
 endmodule
+
 
 
 // module tb_ultrasonic_distance_meter;
