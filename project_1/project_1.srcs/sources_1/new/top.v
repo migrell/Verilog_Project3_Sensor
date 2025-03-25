@@ -2,6 +2,7 @@ module ultrasonic_distance_meter(
     input clk,           // 시스템 클럭 (100MHz)
     input reset,         // 리셋 신호
     input echo,          // 초음파 센서 에코 핀
+    input btn_start,     // 시작 버튼
     output trigger,      // 초음파 센서 트리거 핀
     output [3:0] fnd_comm,  // FND 공통단자 선택 신호
     output [7:0] fnd_font,  // FND 세그먼트 신호 (7세그먼트 + 도트)
@@ -12,6 +13,15 @@ module ultrasonic_distance_meter(
     wire [6:0] w_msec;       // 거리 값 (0-99cm)
     wire w_dp_done;          // DP 모듈에서 측정 완료 신호
     wire w_start_dp;         // CU에서 DP 시작 신호
+    wire w_tick_10msec;      // 10msec 주기 신호
+    wire [3:0] w_led_status;       // LED 상태 신호
+    
+    // 10msec tick generator 인스턴스
+    tick_generator U_tick_generator(
+        .clk(clk),
+        .reset(reset),
+        .tick_10msec(w_tick_10msec)
+    );
     
     // LED 출력 할당
     assign led = w_led_status;
@@ -20,10 +30,13 @@ module ultrasonic_distance_meter(
     cu U_cu(
         .clk(clk),
         .reset(reset),
+        .btn_start(btn_start),
+        .echo(echo),
         .dp_done(w_dp_done),
         .trigger(trigger),
         .start_dp(w_start_dp),
-        .led_status(w_led_status)
+        .led_status(w_led_status),
+        .tick_10msec(w_tick_10msec)
     );
 
     // DP(Distance Processor) 인스턴스
@@ -40,7 +53,13 @@ module ultrasonic_distance_meter(
     fnd_controller U_fnd_controller(
         .clk(clk),
         .reset(reset),
+        .sw_mode(1'b0),
+        .sw(2'b00),
         .msec(w_msec),
+        .sec(6'd0),
+        .min(6'd0),
+        .hour(5'd0),
+        .current_state(2'b00),
         .fnd_font(fnd_font),
         .fnd_comm(fnd_comm)
     );
