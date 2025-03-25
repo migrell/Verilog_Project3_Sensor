@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenRun Id="impl_1" LaunchPart="xc7a35tcpg236-1" LaunchTime="1742870599">
+  <File Type="BITSTR-BMM" Name="ultrasonic_distance_meter_bd.bmm"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="ultrasonic_distance_meter_methodology_drc_opted.rpt"/>
+  <File Type="INIT-TIMING" Name="ultrasonic_distance_meter_timing_summary_init.rpt"/>
+  <File Type="ROUTE-PWR" Name="ultrasonic_distance_meter_power_routed.rpt"/>
+  <File Type="PA-TCL" Name="ultrasonic_distance_meter.tcl"/>
+  <File Type="OPT-TIMING" Name="ultrasonic_distance_meter_timing_summary_opted.rpt"/>
+  <File Type="OPT-DCP" Name="ultrasonic_distance_meter_opt.dcp"/>
+  <File Type="ROUTE-PWR-SUM" Name="ultrasonic_distance_meter_power_summary_routed.pb"/>
+  <File Type="REPORTS-TCL" Name="ultrasonic_distance_meter_reports.tcl"/>
+  <File Type="OPT-DRC" Name="ultrasonic_distance_meter_drc_opted.rpt"/>
+  <File Type="OPT-HWDEF" Name="ultrasonic_distance_meter.hwdef"/>
+  <File Type="PWROPT-DCP" Name="ultrasonic_distance_meter_pwropt.dcp"/>
+  <File Type="PWROPT-DRC" Name="ultrasonic_distance_meter_drc_pwropted.rpt"/>
+  <File Type="PWROPT-TIMING" Name="ultrasonic_distance_meter_timing_summary_pwropted.rpt"/>
+  <File Type="PLACE-DCP" Name="ultrasonic_distance_meter_placed.dcp"/>
+  <File Type="PLACE-IO" Name="ultrasonic_distance_meter_io_placed.rpt"/>
+  <File Type="PLACE-CLK" Name="ultrasonic_distance_meter_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL" Name="ultrasonic_distance_meter_utilization_placed.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="ultrasonic_distance_meter_utilization_placed.pb"/>
+  <File Type="PLACE-CTRL" Name="ultrasonic_distance_meter_control_sets_placed.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="ultrasonic_distance_meter_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-PRE-SIMILARITY" Name="ultrasonic_distance_meter_incremental_reuse_pre_placed.rpt"/>
+  <File Type="PLACE-TIMING" Name="ultrasonic_distance_meter_timing_summary_placed.rpt"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="ultrasonic_distance_meter_postplace_pwropt.dcp"/>
+  <File Type="BG-BIN" Name="ultrasonic_distance_meter.bin"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="ultrasonic_distance_meter_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="ultrasonic_distance_meter_physopt.dcp"/>
+  <File Type="PHYSOPT-DRC" Name="ultrasonic_distance_meter_drc_physopted.rpt"/>
+  <File Type="BITSTR-MSK" Name="ultrasonic_distance_meter.msk"/>
+  <File Type="PHYSOPT-TIMING" Name="ultrasonic_distance_meter_timing_summary_physopted.rpt"/>
+  <File Type="ROUTE-ERROR-DCP" Name="ultrasonic_distance_meter_routed_error.dcp"/>
+  <File Type="ROUTE-DCP" Name="ultrasonic_distance_meter_routed.dcp"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="ultrasonic_distance_meter_routed_bb.dcp"/>
+  <File Type="ROUTE-DRC" Name="ultrasonic_distance_meter_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-PB" Name="ultrasonic_distance_meter_drc_routed.pb"/>
+  <File Type="ROUTE-DRC-RPX" Name="ultrasonic_distance_meter_drc_routed.rpx"/>
+  <File Type="BITSTR-MMI" Name="ultrasonic_distance_meter.mmi"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="ultrasonic_distance_meter_methodology_drc_routed.rpt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="ultrasonic_distance_meter_methodology_drc_routed.rpx"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="ultrasonic_distance_meter_methodology_drc_routed.pb"/>
+  <File Type="ROUTE-PWR-RPX" Name="ultrasonic_distance_meter_power_routed.rpx"/>
+  <File Type="ROUTE-STATUS" Name="ultrasonic_distance_meter_route_status.rpt"/>
+  <File Type="ROUTE-STATUS-PB" Name="ultrasonic_distance_meter_route_status.pb"/>
+  <File Type="ROUTE-TIMINGSUMMARY" Name="ultrasonic_distance_meter_timing_summary_routed.rpt"/>
+  <File Type="ROUTE-TIMING-PB" Name="ultrasonic_distance_meter_timing_summary_routed.pb"/>
+  <File Type="ROUTE-TIMING-RPX" Name="ultrasonic_distance_meter_timing_summary_routed.rpx"/>
+  <File Type="ROUTE-SIMILARITY" Name="ultrasonic_distance_meter_incremental_reuse_routed.rpt"/>
+  <File Type="ROUTE-CLK" Name="ultrasonic_distance_meter_clock_utilization_routed.rpt"/>
+  <File Type="ROUTE-BUS-SKEW" Name="ultrasonic_distance_meter_bus_skew_routed.rpt"/>
+  <File Type="ROUTE-BUS-SKEW-PB" Name="ultrasonic_distance_meter_bus_skew_routed.pb"/>
+  <File Type="ROUTE-BUS-SKEW-RPX" Name="ultrasonic_distance_meter_bus_skew_routed.rpx"/>
+  <File Type="POSTROUTE-PHYSOPT-DCP" Name="ultrasonic_distance_meter_postroute_physopt.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-BLACKBOX-DCP" Name="ultrasonic_distance_meter_postroute_physopt_bb.dcp"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING" Name="ultrasonic_distance_meter_timing_summary_postroute_physopted.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-PB" Name="ultrasonic_distance_meter_timing_summary_postroute_physopted.pb"/>
+  <File Type="POSTROUTE-PHYSOPT-TIMING-RPX" Name="ultrasonic_distance_meter_timing_summary_postroute_physopted.rpx"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW" Name="ultrasonic_distance_meter_bus_skew_postroute_physopted.rpt"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-PB" Name="ultrasonic_distance_meter_bus_skew_postroute_physopted.pb"/>
+  <File Type="BG-BIT" Name="ultrasonic_distance_meter.bit"/>
+  <File Type="POSTROUTE-PHYSOPT-BUS-SKEW-RPX" Name="ultrasonic_distance_meter_bus_skew_postroute_physopted.rpx"/>
+  <File Type="BITSTR-RBT" Name="ultrasonic_distance_meter.rbt"/>
+  <File Type="BITSTR-NKY" Name="ultrasonic_distance_meter.nky"/>
+  <File Type="PDI-FILE" Name="ultrasonic_distance_meter.pdi"/>
+  <File Type="RCFI_FILE" Name="ultrasonic_distance_meter.rcfi"/>
+  <File Type="CFI_FILE" Name="ultrasonic_distance_meter.cfi"/>
+  <File Type="RNPI_FILE" Name="ultrasonic_distance_meter.rnpi"/>
+  <File Type="NPI_FILE" Name="ultrasonic_distance_meter.npi"/>
+  <File Type="RBD_FILE" Name="ultrasonic_distance_meter.rbd"/>
+  <File Type="BITSTR-LTX" Name="debug_nets.ltx"/>
+  <File Type="BITSTR-LTX" Name="ultrasonic_distance_meter.ltx"/>
+  <File Type="BITSTR-SYSDEF" Name="ultrasonic_distance_meter.sysdef"/>
+  <File Type="BG-BGN" Name="ultrasonic_distance_meter.bgn"/>
+  <File Type="BG-DRC" Name="ultrasonic_distance_meter.drc"/>
+  <File Type="RDI-RDI" Name="ultrasonic_distance_meter.vdi"/>
+  <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
+  <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
+    <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/new/cu.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/dp.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/fnd.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/tick_generator.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/dist.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="DesignMode" Val="RTL"/>
+      <Option Name="TopModule" Val="ultrasonic_distance_meter"/>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
+    <Filter Type="Constrs"/>
+    <File Path="D:/XDC/Basys-3-Master.xdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
+    <Config>
+      <Option Name="ConstrsType" Val="XDC"/>
+    </Config>
+  </FileSet>
+  <FileSet Name="utils" Type="Utils" RelSrcDir="$PSRCDIR/utils_1">
+    <Filter Type="Utils"/>
+    <Config>
+      <Option Name="TopAutoSet" Val="TRUE"/>
+    </Config>
+  </FileSet>
+  <Strategy Version="1" Minor="2">
+    <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2020">
+      <Desc>Default settings for Implementation.</Desc>
+    </StratHandle>
+    <Step Id="init_design"/>
+    <Step Id="opt_design"/>
+    <Step Id="power_opt_design"/>
+    <Step Id="place_design"/>
+    <Step Id="post_place_power_opt_design"/>
+    <Step Id="phys_opt_design"/>
+    <Step Id="route_design"/>
+    <Step Id="post_route_phys_opt_design"/>
+    <Step Id="write_bitstream"/>
+  </Strategy>
+</GenRun>
