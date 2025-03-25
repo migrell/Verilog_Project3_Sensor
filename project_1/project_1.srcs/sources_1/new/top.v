@@ -10,18 +10,30 @@ module ultrasonic_distance_meter(
 );
 
     // 내부 신호
-    wire [6:0] w_msec;       // 거리 값 (0-99cm)
-    wire w_dp_done;          // DP 모듈에서 측정 완료 신호
-    wire w_start_dp;         // CU에서 DP 시작 신호
-    wire w_tick_10msec;      // 10msec 주기 신호
-    wire [3:0] w_led_status; // LED 상태 신호
-    wire w_fsm_error;        // FSM 오류 감지 신호
+    wire [6:0] w_msec;         // 거리 값 (0-99cm)
+    wire w_dp_done;            // DP 모듈에서 측정 완료 신호
+    wire w_start_dp;           // CU에서 DP 시작 신호
+    wire w_tick_10msec;        // 10msec 주기 신호
+    wire [3:0] w_led_status;   // LED 상태 신호
+    wire w_fsm_error;          // FSM 오류 감지 신호
+    wire w_btn_debounced;      // 디바운스된 버튼 신호
     
     // 10msec tick generator 인스턴스
     tick_generator U_tick_generator(
         .clk(clk),
         .reset(reset),
         .tick_10msec(w_tick_10msec)
+    );
+    
+    // 버튼 디바운스 모듈 추가
+    btn_debounce U_btn_debounce(
+        .clk(clk),
+        .reset(reset),
+        .i_btn(btn_start),
+        .rx_done(1'b0),        // UART 기능 미사용 시 0으로 설정
+        .rx_data(8'h00),       // UART 기능 미사용 시 0으로 설정
+        .btn_type(3'd0),       // RUN 버튼 타입(0) 선택
+        .o_btn(w_btn_debounced)
     );
     
     // LED 컨트롤러 모듈 인스턴스화
@@ -33,11 +45,11 @@ module ultrasonic_distance_meter(
         .led(led)
     );
 
-    // CU(Control Unit) 인스턴스
+    // CU(Control Unit) 인스턴스 - 디바운스된 버튼 신호 사용
     cu U_cu(
         .clk(clk),
         .reset(reset),
-        .btn_start(btn_start),
+        .btn_start(w_btn_debounced),  // 디바운스된 버튼 신호 사용
         .echo(echo),
         .dp_done(w_dp_done),
         .tick_10msec(w_tick_10msec),
