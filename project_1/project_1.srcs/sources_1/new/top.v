@@ -14,7 +14,8 @@ module ultrasonic_distance_meter(
     wire w_dp_done;          // DP 모듈에서 측정 완료 신호
     wire w_start_dp;         // CU에서 DP 시작 신호
     wire w_tick_10msec;      // 10msec 주기 신호
-    wire [3:0] w_led_status;       // LED 상태 신호
+    wire [3:0] w_led_status; // LED 상태 신호
+    wire w_fsm_error;        // FSM 오류 감지 신호
     
     // 10msec tick generator 인스턴스
     tick_generator U_tick_generator(
@@ -23,8 +24,14 @@ module ultrasonic_distance_meter(
         .tick_10msec(w_tick_10msec)
     );
     
-    // LED 출력 할당
-    assign led = w_led_status;
+    // LED 컨트롤러 모듈 인스턴스화
+    led_controller U_led_controller(
+        .clk(clk),
+        .reset(reset),
+        .fsm_error(w_fsm_error),
+        .led_status(w_led_status),
+        .led(led)
+    );
 
     // CU(Control Unit) 인스턴스
     cu U_cu(
@@ -33,10 +40,11 @@ module ultrasonic_distance_meter(
         .btn_start(btn_start),
         .echo(echo),
         .dp_done(w_dp_done),
+        .tick_10msec(w_tick_10msec),
         .trigger(trigger),
         .start_dp(w_start_dp),
         .led_status(w_led_status),
-        .tick_10msec(w_tick_10msec)
+        .fsm_error(w_fsm_error)
     );
 
     // DP(Distance Processor) 인스턴스
