@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2020.2 (win64) Build 3064766 Wed Nov 18 09:12:45 MST 2020
-| Date             : Thu Mar 27 03:42:41 2025
+| Date             : Thu Mar 27 04:21:48 2025
 | Host             : parkjiho running 64-bit major release  (build 9200)
 | Command          : report_power -file top_dut_power_routed.rpt -pb top_dut_power_summary_routed.pb -rpx top_dut_power_routed.rpx
 | Design           : top_dut
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.082        |
+| Total On-Chip Power (W)  | 0.081        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.011        |
+| Dynamic (W)              | 0.009        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
 | Max Ambient (C)          | 84.6         |
@@ -53,15 +53,15 @@ Table of Contents
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
 | Clocks         |     0.001 |        3 |       --- |             --- |
-| Slice Logic    |    <0.001 |      280 |       --- |             --- |
-|   LUT as Logic |    <0.001 |      120 |     20800 |            0.58 |
-|   Register     |    <0.001 |      120 |     41600 |            0.29 |
+| Slice Logic    |    <0.001 |      293 |       --- |             --- |
+|   LUT as Logic |    <0.001 |      129 |     20800 |            0.62 |
+|   Register     |    <0.001 |      122 |     41600 |            0.29 |
 |   CARRY4       |    <0.001 |       13 |      8150 |            0.16 |
 |   Others       |     0.000 |        7 |       --- |             --- |
-| Signals        |    <0.001 |      195 |       --- |             --- |
-| I/O            |     0.009 |       24 |       106 |           22.64 |
+| Signals        |    <0.001 |      204 |       --- |             --- |
+| I/O            |     0.008 |       24 |       106 |           22.64 |
 | Static Power   |     0.072 |          |           |                 |
-| Total          |     0.082 |          |           |                 |
+| Total          |     0.081 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -140,7 +140,7 @@ Table of Contents
 +---------+-----------+
 | Name    | Power (W) |
 +---------+-----------+
-| top_dut |     0.011 |
+| top_dut |     0.009 |
 +---------+-----------+
 
 

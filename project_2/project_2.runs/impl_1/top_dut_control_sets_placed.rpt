@@ -1,7 +1,7 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2020.2 (win64) Build 3064766 Wed Nov 18 09:12:45 MST 2020
-| Date         : Thu Mar 27 03:42:12 2025
+| Date         : Thu Mar 27 04:21:20 2025
 | Host         : parkjiho running 64-bit major release  (build 9200)
 | Command      : report_control_sets -verbose -file top_dut_control_sets_placed.rpt
 | Design       : top_dut
@@ -27,7 +27,7 @@ Table of Contents
 |    Minimum number of control sets                        |     7 |
 |    Addition due to synthesis replication                 |     0 |
 |    Addition due to physical synthesis replication        |     0 |
-| Unused register locations in slices containing registers |    16 |
+| Unused register locations in slices containing registers |    14 |
 +----------------------------------------------------------+-------+
 * Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
 ** Run report_qor_suggestions for automated merging and remapping suggestions
@@ -42,8 +42,8 @@ Table of Contents
 | Total control sets |     7 |
 | >= 0 to < 4        |     1 |
 | >= 4 to < 6        |     1 |
-| >= 6 to < 8        |     1 |
-| >= 8 to < 10       |     1 |
+| >= 6 to < 8        |     0 |
+| >= 8 to < 10       |     2 |
 | >= 10 to < 12      |     0 |
 | >= 12 to < 14      |     0 |
 | >= 14 to < 16      |     0 |
@@ -62,7 +62,7 @@ Table of Contents
 | No           | No                    | Yes                    |              69 |           21 |
 | No           | Yes                   | No                     |               0 |            0 |
 | Yes          | No                    | No                     |               0 |            0 |
-| Yes          | No                    | Yes                    |              51 |           17 |
+| Yes          | No                    | Yes                    |              53 |           18 |
 | Yes          | Yes                   | No                     |               0 |            0 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 
@@ -74,9 +74,9 @@ Table of Contents
 |  Clock Signal  |                 Enable Signal                | Set/Reset Signal | Slice Load Count | Bel Load Count | Bels / Slice |
 +----------------+----------------------------------------------+------------------+------------------+----------------+--------------+
 |  clk_IBUF_BUFG | U_DUT_CTR/dnt_io_i_1_n_0                     | rst_IBUF         |                1 |              1 |         1.00 |
-|  clk_IBUF_BUFG | U_DUT_CTR/FSM_sequential_state[3]_i_1_n_0    | rst_IBUF         |                1 |              4 |         4.00 |
-|  clk_IBUF_BUFG | U_DUT_CTR/bit_count                          | rst_IBUF         |                3 |              6 |         2.00 |
-|  clk_IBUF_BUFG | U_DUT_CTR/delay_counter                      | rst_IBUF         |                4 |              8 |         2.00 |
+|  clk_IBUF_BUFG | U_DUT_CTR/FSM_sequential_state[3]_i_1_n_0    | rst_IBUF         |                2 |              4 |         2.00 |
+|  clk_IBUF_BUFG | U_DUT_CTR/bit_timeout_counter                | rst_IBUF         |                4 |              8 |         2.00 |
+|  clk_IBUF_BUFG | U_DUT_CTR/delay_counter                      | rst_IBUF         |                3 |              8 |         2.67 |
 |  clk_IBUF_BUFG | U_DEBOUNCE_NEXT/stable_counter[0]_i_1__0_n_0 | rst_IBUF         |                4 |             16 |         4.00 |
 |  clk_IBUF_BUFG | U_DEBOUNCE_START/stable_counter[0]_i_1_n_0   | rst_IBUF         |                4 |             16 |         4.00 |
 |  clk_IBUF_BUFG |                                              | rst_IBUF         |               21 |             69 |         3.29 |
