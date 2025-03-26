@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Wed Mar 26 14:22:09 2025
+# Process ID: 6976
+# Current directory: C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.runs/synth_1
+# Command line: vivado.exe -log top_dut.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_dut.tcl
+# Log file: C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.runs/synth_1/top_dut.vds
+# Journal file: C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.runs/synth_1\vivado.jou
+#-----------------------------------------------------------
+source top_dut.tcl -notrace
