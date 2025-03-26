@@ -1,0 +1,19 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Wed Mar 26 18:52:40 2025
+# Process ID: 23740
+# Current directory: C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent21128 C:\Users\parkj\Desktop\250325_Uart_Sensor\project_2\project_2.xpr
+# Log file: C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2/vivado.log
+# Journal file: C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2/project_2.xpr
+update_compile_order -fileset sources_1
+export_ip_user_files -of_objects  [get_files D:/XDC/Basys-3-Master.xdc] -no_script -reset -force -quiet
+remove_files  -fileset constrs_1 D:/XDC/Basys-3-Master.xdc
+file mkdir C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2/project_2.srcs/constrs_1
+add_files -fileset constrs_1 -norecurse C:/verilog/Basys-3-Master.xdc
+synth_design -rtl -rtl_skip_mlo -name rtl_1

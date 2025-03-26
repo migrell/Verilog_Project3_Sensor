@@ -74,7 +74,6 @@ module top_dut(
 
 endmodule
 
-
 // `timescale 1ns / 1ps
 
 // module top_dut(
