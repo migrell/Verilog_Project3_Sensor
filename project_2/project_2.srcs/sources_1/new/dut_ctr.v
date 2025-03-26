@@ -11,7 +11,6 @@ module dut_ctr (
     output reg [7:0] dnt_sensor_data,
     output reg dnt_io,
 
-    // FSM 상태 모니터링을 위한 출력
     output reg idle,
     output reg start,
     output reg wait_state,
@@ -23,42 +22,33 @@ module dut_ctr (
     output reg read
 );
 
-    // 상태 정의
-    localparam IDLE = 4'b0000;
-    localparam START = 4'b0001;
-    localparam WAIT = 4'b0010;
-    localparam SYNC_LOW = 4'b0011;
-    localparam SYNC_HIGH = 4'b0100;
-    localparam DATA_SYNC = 4'b0101;
-    localparam DATA_BIT = 4'b0110;
-    localparam STOP = 4'b0111;
-    localparam READ = 4'b1000;
+    localparam IDLE       = 4'b0000;
+    localparam START      = 4'b0001;
+    localparam WAIT       = 4'b0010;
+    localparam SYNC_LOW   = 4'b0011;
+    localparam SYNC_HIGH  = 4'b0100;
+    localparam DATA_SYNC  = 4'b0101;
+    localparam DATA_BIT   = 4'b0110;
+    localparam STOP       = 4'b0111;
+    localparam READ       = 4'b1000;
 
-    // 타이밍 파라미터
     localparam MAX_BITS = 3;
-    
-    // 상태 변수
+
     reg [3:0] state;
     reg [5:0] bit_count;
     reg [39:0] received_data;
-    
-    // 버튼 동기화 및 엣지 감지를 위한 변수
+
     reg [2:0] btn_sync;
     reg btn_edge;
-    
-    // 추가 버튼 동기화 및 엣지 감지
+
     reg [2:0] next_btn_sync;
     reg next_btn_edge;
-    
-    // 타이머 관련 변수
+
     reg [9:0] tick_count;
     reg [7:0] delay_counter;
     reg tick_prev;
-    
-    // 직접 STOP으로 이동하기 위한 플래그
-    reg direct_to_stop;
-    
-    // 버튼 엣지 감지
+
+    // 엣지 감지 블록
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             btn_sync <= 3'b000;
@@ -67,20 +57,19 @@ module dut_ctr (
             next_btn_edge <= 1'b0;
             tick_prev <= 0;
         end else begin
-            // 시작 버튼 동기화 및 엣지 감지
+            // btn_start rising edge
             btn_sync <= {btn_sync[1:0], btn_start};
             btn_edge <= (btn_sync[1] & ~btn_sync[2]);
-            
-            // 추가 버튼 동기화 및 엣지 감지
+
+            // btn_next (T17)
             next_btn_sync <= {next_btn_sync[1:0], btn_next};
             next_btn_edge <= (next_btn_sync[1] & ~next_btn_sync[2]);
-            
-            // tick_counter 엣지 감지
+
             tick_prev <= tick_counter;
         end
     end
-    
-    // 통합된 상태 머신 및 출력 제어
+
+    // FSM
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= IDLE;
@@ -93,9 +82,7 @@ module dut_ctr (
             sensor_data <= 0;
             dnt_sensor_data <= 0;
             delay_counter <= 0;
-            direct_to_stop <= 0;
-            
-            // 상태 출력 초기화
+
             idle <= 1'b1;
             start <= 1'b0;
             wait_state <= 1'b0;
@@ -106,7 +93,6 @@ module dut_ctr (
             stop_out <= 1'b0;
             read <= 1'b0;
         end else begin
-            // 기본적으로 모든 상태 출력 비활성화
             idle <= 1'b0;
             start <= 1'b0;
             wait_state <= 1'b0;
@@ -116,158 +102,130 @@ module dut_ctr (
             data_bit_out <= 1'b0;
             stop_out <= 1'b0;
             read <= 1'b0;
-            
-            // tick_counter 상승 엣지 감지 시 delay_counter 증가
+
             if (tick_counter & ~tick_prev) begin
                 delay_counter <= delay_counter + 1;
             end
-            
-            // 상태에 따른 출력 설정
+
             case (state)
                 IDLE: begin
                     idle <= 1'b1;
                     dnt_io <= 1'b1;
                     current_state <= IDLE;
-                    direct_to_stop <= 0;
-                    
-                    // 버튼 누름 감지 시 상태 전환
+
                     if (btn_edge) begin
                         state <= START;
-                        bit_count <= 0;
                         delay_counter <= 0;
+                        bit_count <= 0;
                     end
                 end
-                
+
                 START: begin
                     start <= 1'b1;
-                    dnt_io <= 1'b0;  // START 상태에서 LOW 출력
+                    dnt_io <= 1'b0;
                     current_state <= START;
-                    
-                    // 약 0.5초 후 다음 상태로
+
                     if (delay_counter >= 50) begin
                         state <= WAIT;
                         delay_counter <= 0;
                     end
                 end
-                
+
                 WAIT: begin
                     wait_state <= 1'b1;
-                    dnt_io <= 1'b1;  // WAIT 상태에서 HIGH 출력
+                    dnt_io <= 1'b1;
                     current_state <= WAIT;
-                    
+
                     if (delay_counter >= 50) begin
                         state <= SYNC_LOW;
                         delay_counter <= 0;
                     end
                 end
-                
+
                 SYNC_LOW: begin
                     sync_low_out <= 1'b1;
-                    dnt_io <= 1'b0;  // SYNC_LOW 상태에서 LOW 출력
+                    dnt_io <= 1'b0;
                     current_state <= SYNC_LOW;
-                    
+
                     if (delay_counter >= 50) begin
                         state <= SYNC_HIGH;
                         delay_counter <= 0;
                     end
                 end
-                
+
                 SYNC_HIGH: begin
                     sync_high_out <= 1'b1;
-                    dnt_io <= 1'b1;  // SYNC_HIGH 상태에서 HIGH 출력
+                    dnt_io <= 1'b1;
                     current_state <= SYNC_HIGH;
-                    
+
                     if (delay_counter >= 50) begin
                         state <= DATA_SYNC;
-                        bit_count <= 0;  // 비트 카운트 초기화
                         delay_counter <= 0;
                     end
                 end
-                
+
                 DATA_SYNC: begin
                     data_sync_out <= 1'b1;
-                    dnt_io <= 1'b0;  // DATA_SYNC 상태에서 LOW 출력
+                    dnt_io <= 1'b0;
                     current_state <= DATA_SYNC;
-                    
+
                     if (delay_counter >= 50) begin
-                        // 이전에 direct_to_stop이 설정되었거나 비트 카운트가 충분하면 STOP으로 이동
-                        if (direct_to_stop || bit_count >= MAX_BITS) begin
-                            state <= STOP;
-                            delay_counter <= 0;
-                            direct_to_stop <= 0;  // 플래그 초기화
-                        end else begin
-                            state <= DATA_BIT;
-                            delay_counter <= 0;
-                            
-                            // 마지막 비트 직전이면 다음 사이클에서 STOP으로 바로 이동하도록 플래그 설정
-                            if (bit_count == MAX_BITS - 1) begin
-                                direct_to_stop <= 1;
-                            end
-                        end
+                        state <= DATA_BIT;
+                        delay_counter <= 0;
                     end
                 end
-                
+
                 DATA_BIT: begin
                     data_bit_out <= 1'b1;
-                    dnt_io <= 1'b1;  // DATA_BIT 상태에서 HIGH 출력
+                    dnt_io <= 1'b1;
                     current_state <= DATA_BIT;
-                    
-                    // 중요: 추가 버튼이 눌리면 즉시 STOP 상태로 전환
+
                     if (next_btn_edge) begin
-                        state <= STOP;
-                        delay_counter <= 0;
-                        
-                        // 데이터 비트 처리 및 비트 카운트 증가 (전환 전에 처리)
                         received_data <= {received_data[38:0], 1'b1};
                         sensor_data <= 1'b1;
                         bit_count <= bit_count + 1;
+                        delay_counter <= 0;
+                        state <= STOP;
                     end
                     else if (delay_counter >= 50) begin
-                        // 일반적인 타이머 기반 상태 전환
                         received_data <= {received_data[38:0], 1'b1};
                         sensor_data <= 1'b1;
                         bit_count <= bit_count + 1;
-                        
-                        // direct_to_stop 플래그가 설정되었으면 바로 STOP으로 이동
-                        if (direct_to_stop) begin
+                        delay_counter <= 0;
+
+                        if (bit_count >= MAX_BITS - 1) begin
                             state <= STOP;
-                            delay_counter <= 0;
-                            direct_to_stop <= 0;  // 플래그 초기화
                         end else begin
                             state <= DATA_SYNC;
-                            delay_counter <= 0;
                         end
                     end
                 end
-                
+
                 STOP: begin
                     stop_out <= 1'b1;
-                    dnt_io <= 1'b1;  // STOP 상태에서 HIGH 출력
+                    dnt_io <= 1'b1;
                     current_state <= STOP;
-                    
-                    // STOP 상태에서는 더 오래 대기 (다른 상태의 2배)
+
                     if (delay_counter >= 100) begin
                         state <= READ;
                         dnt_sensor_data <= received_data[39:32];
                         delay_counter <= 0;
                     end
                 end
-                
+
                 READ: begin
                     read <= 1'b1;
-                    dnt_io <= 1'b0;  // READ 상태에서 LOW 출력
+                    dnt_io <= 1'b0;
                     current_state <= READ;
-                    
+
                     if (delay_counter >= 50) begin
                         state <= IDLE;
                         delay_counter <= 0;
                     end
                 end
-                
+
                 default: begin
                     state <= IDLE;
-                    idle <= 1'b1;
-                    dnt_io <= 1'b1;
                     current_state <= IDLE;
                 end
             endcase
@@ -275,6 +233,288 @@ module dut_ctr (
     end
 
 endmodule
+
+
+
+
+
+// module dut_ctr (
+//     input clk,
+//     input rst,
+//     input btn_start,
+//     input tick_counter,
+//     input btn_next,  // T17 핀에 연결될 추가 버튼 입력
+
+//     output reg sensor_data,
+//     output reg [3:0] current_state,
+//     output reg [7:0] dnt_data,
+//     output reg [7:0] dnt_sensor_data,
+//     output reg dnt_io,
+
+//     // FSM 상태 모니터링을 위한 출력
+//     output reg idle,
+//     output reg start,
+//     output reg wait_state,
+//     output reg sync_low_out,
+//     output reg sync_high_out,
+//     output reg data_sync_out,
+//     output reg data_bit_out,
+//     output reg stop_out,
+//     output reg read
+// );
+
+//     // 상태 정의
+//     localparam IDLE = 4'b0000;
+//     localparam START = 4'b0001;
+//     localparam WAIT = 4'b0010;
+//     localparam SYNC_LOW = 4'b0011;
+//     localparam SYNC_HIGH = 4'b0100;
+//     localparam DATA_SYNC = 4'b0101;
+//     localparam DATA_BIT = 4'b0110;
+//     localparam STOP = 4'b0111;
+//     localparam READ = 4'b1000;
+
+//     // 타이밍 파라미터
+//     localparam MAX_BITS = 3;
+    
+//     // 상태 변수
+//     reg [3:0] state;
+//     reg [5:0] bit_count;
+//     reg [39:0] received_data;
+    
+//     // 버튼 동기화 및 엣지 감지를 위한 변수
+//     reg [2:0] btn_sync;
+//     reg btn_edge;
+    
+//     // 추가 버튼 동기화 및 엣지 감지
+//     reg [2:0] next_btn_sync;
+//     reg next_btn_edge;
+    
+//     // 타이머 관련 변수
+//     reg [9:0] tick_count;
+//     reg [7:0] delay_counter;
+//     reg tick_prev;
+    
+//     // 직접 STOP으로 이동하기 위한 플래그
+//     reg direct_to_stop;
+    
+//     // 버튼 엣지 감지
+//     always @(posedge clk or posedge rst) begin
+//         if (rst) begin
+//             btn_sync <= 3'b000;
+//             btn_edge <= 1'b0;
+//             next_btn_sync <= 3'b000;
+//             next_btn_edge <= 1'b0;
+//             tick_prev <= 0;
+//         end else begin
+//             // 시작 버튼 동기화 및 엣지 감지
+//             btn_sync <= {btn_sync[1:0], btn_start};
+//             btn_edge <= (btn_sync[1] & ~btn_sync[2]);
+            
+//             // 추가 버튼 동기화 및 엣지 감지
+//             next_btn_sync <= {next_btn_sync[1:0], btn_next};
+//             next_btn_edge <= (next_btn_sync[1] & ~next_btn_sync[2]);
+            
+//             // tick_counter 엣지 감지
+//             tick_prev <= tick_counter;
+//         end
+//     end
+    
+//     // 통합된 상태 머신 및 출력 제어
+//     always @(posedge clk or posedge rst) begin
+//         if (rst) begin
+//             state <= IDLE;
+//             tick_count <= 0;
+//             bit_count <= 0;
+//             received_data <= 0;
+//             dnt_data <= 0;
+//             dnt_io <= 1'b1;
+//             current_state <= IDLE;
+//             sensor_data <= 0;
+//             dnt_sensor_data <= 0;
+//             delay_counter <= 0;
+//             direct_to_stop <= 0;
+            
+//             // 상태 출력 초기화
+//             idle <= 1'b1;
+//             start <= 1'b0;
+//             wait_state <= 1'b0;
+//             sync_low_out <= 1'b0;
+//             sync_high_out <= 1'b0;
+//             data_sync_out <= 1'b0;
+//             data_bit_out <= 1'b0;
+//             stop_out <= 1'b0;
+//             read <= 1'b0;
+//         end else begin
+//             // 기본적으로 모든 상태 출력 비활성화
+//             idle <= 1'b0;
+//             start <= 1'b0;
+//             wait_state <= 1'b0;
+//             sync_low_out <= 1'b0;
+//             sync_high_out <= 1'b0;
+//             data_sync_out <= 1'b0;
+//             data_bit_out <= 1'b0;
+//             stop_out <= 1'b0;
+//             read <= 1'b0;
+            
+//             // tick_counter 상승 엣지 감지 시 delay_counter 증가
+//             if (tick_counter & ~tick_prev) begin
+//                 delay_counter <= delay_counter + 1;
+//             end
+            
+//             // 상태에 따른 출력 설정
+//             case (state)
+//                 IDLE: begin
+//                     idle <= 1'b1;
+//                     dnt_io <= 1'b1;
+//                     current_state <= IDLE;
+//                     direct_to_stop <= 0;
+                    
+//                     // 버튼 누름 감지 시 상태 전환
+//                     if (btn_edge) begin
+//                         state <= START;
+//                         bit_count <= 0;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 START: begin
+//                     start <= 1'b1;
+//                     dnt_io <= 1'b0;  // START 상태에서 LOW 출력
+//                     current_state <= START;
+                    
+//                     // 약 0.5초 후 다음 상태로
+//                     if (delay_counter >= 50) begin
+//                         state <= WAIT;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 WAIT: begin
+//                     wait_state <= 1'b1;
+//                     dnt_io <= 1'b1;  // WAIT 상태에서 HIGH 출력
+//                     current_state <= WAIT;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= SYNC_LOW;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 SYNC_LOW: begin
+//                     sync_low_out <= 1'b1;
+//                     dnt_io <= 1'b0;  // SYNC_LOW 상태에서 LOW 출력
+//                     current_state <= SYNC_LOW;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= SYNC_HIGH;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 SYNC_HIGH: begin
+//                     sync_high_out <= 1'b1;
+//                     dnt_io <= 1'b1;  // SYNC_HIGH 상태에서 HIGH 출력
+//                     current_state <= SYNC_HIGH;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= DATA_SYNC;
+//                         bit_count <= 0;  // 비트 카운트 초기화
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 DATA_SYNC: begin
+//                     data_sync_out <= 1'b1;
+//                     dnt_io <= 1'b0;  // DATA_SYNC 상태에서 LOW 출력
+//                     current_state <= DATA_SYNC;
+                    
+//                     if (delay_counter >= 50) begin
+//                         // 이전에 direct_to_stop이 설정되었거나 비트 카운트가 충분하면 STOP으로 이동
+//                         if (direct_to_stop || bit_count >= MAX_BITS) begin
+//                             state <= STOP;
+//                             delay_counter <= 0;
+//                             direct_to_stop <= 0;  // 플래그 초기화
+//                         end else begin
+//                             state <= DATA_BIT;
+//                             delay_counter <= 0;
+                            
+//                             // 마지막 비트 직전이면 다음 사이클에서 STOP으로 바로 이동하도록 플래그 설정
+//                             if (bit_count == MAX_BITS - 1) begin
+//                                 direct_to_stop <= 1;
+//                             end
+//                         end
+//                     end
+//                 end
+                
+//                 DATA_BIT: begin
+//                     data_bit_out <= 1'b1;
+//                     dnt_io <= 1'b1;  // DATA_BIT 상태에서 HIGH 출력
+//                     current_state <= DATA_BIT;
+                    
+//                     // 중요: 추가 버튼이 눌리면 즉시 STOP 상태로 전환
+//                     if (next_btn_edge) begin
+//                         state <= STOP;
+//                         delay_counter <= 0;
+                        
+//                         // 데이터 비트 처리 및 비트 카운트 증가 (전환 전에 처리)
+//                         received_data <= {received_data[38:0], 1'b1};
+//                         sensor_data <= 1'b1;
+//                         bit_count <= bit_count + 1;
+//                     end
+//                     else if (delay_counter >= 50) begin
+//                         // 일반적인 타이머 기반 상태 전환
+//                         received_data <= {received_data[38:0], 1'b1};
+//                         sensor_data <= 1'b1;
+//                         bit_count <= bit_count + 1;
+                        
+//                         // direct_to_stop 플래그가 설정되었으면 바로 STOP으로 이동
+//                         if (direct_to_stop) begin
+//                             state <= STOP;
+//                             delay_counter <= 0;
+//                             direct_to_stop <= 0;  // 플래그 초기화
+//                         end else begin
+//                             state <= DATA_SYNC;
+//                             delay_counter <= 0;
+//                         end
+//                     end
+//                 end
+                
+//                 STOP: begin
+//                     stop_out <= 1'b1;
+//                     dnt_io <= 1'b1;  // STOP 상태에서 HIGH 출력
+//                     current_state <= STOP;
+                    
+//                     // STOP 상태에서는 더 오래 대기 (다른 상태의 2배)
+//                     if (delay_counter >= 100) begin
+//                         state <= READ;
+//                         dnt_sensor_data <= received_data[39:32];
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 READ: begin
+//                     read <= 1'b1;
+//                     dnt_io <= 1'b0;  // READ 상태에서 LOW 출력
+//                     current_state <= READ;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= IDLE;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 default: begin
+//                     state <= IDLE;
+//                     idle <= 1'b1;
+//                     dnt_io <= 1'b1;
+//                     current_state <= IDLE;
+//                 end
+//             endcase
+//         end
+//     end
+
+// endmodule
  
  
  

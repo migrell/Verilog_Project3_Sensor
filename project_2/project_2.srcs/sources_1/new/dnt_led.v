@@ -27,6 +27,10 @@ module dnt_led (
         end
     end
 
-    // 최종 LED 출력
-    assign led = fsm_error ? 9'b111111111 : led_status;
+    assign led = {idle, start, wait_state, sync_low_out, sync_high_out, 
+              data_sync_out, data_bit_out, stop_out, read};
+
+
+    // // 최종 LED 출력
+    // assign led = fsm_error ? 9'b111111111 : led_status;
 endmodule
