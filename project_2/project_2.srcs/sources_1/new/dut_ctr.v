@@ -11,6 +11,9 @@ module dut_ctr (
     output reg dnt_io
 );
 
+    parameters START_CNT = 1800, WAIT_CNT = 3, SYNC_CNT = 8 , DATA_SYNC= 5, DATA_0 = 4; , DATA_1 = 7, DATA_1 = 7,
+               STOP_CNT = 5 , TIME_OUT = 2000; 
+
     // State declaration
     localparam IDLE = 2'b00, START = 2'b01, WAIT = 2'b10, READ = 2'b11;
     
