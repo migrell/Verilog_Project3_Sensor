@@ -10,13 +10,17 @@ module tick_gen(
             tick_counter <= 0;
             tick_10msec <= 0;
         end else begin
-            if (tick_counter >= 1_000_000 - 1) begin
+            if (tick_counter >= 1_000_000 - 1) begin  // 10ms 주기
                 tick_counter <= 0;
-                tick_10msec <= 1;  // 틱 신호 활성화
+                tick_10msec <= 1;  // 펄스 시작
             end else begin
                 tick_counter <= tick_counter + 1;
-                // 펄스 폭을 1 클럭 사이클로 줄임
-                tick_10msec <= (tick_counter == 0) ? 1 : 0;
+                
+                // 펄스 유지 시간을 10 클럭 사이클로 설정
+                if (tick_counter < 10)
+                    tick_10msec <= 1;
+                else
+                    tick_10msec <= 0;
             end
         end
     end
