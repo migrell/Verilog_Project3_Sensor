@@ -2,8 +2,8 @@
 # Vivado v2020.2 (64-bit)
 # SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
 # IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
-# Start of session at: Wed Mar 26 22:25:37 2025
-# Process ID: 5280
+# Start of session at: Thu Mar 27 03:41:11 2025
+# Process ID: 15876
 # Current directory: C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2/project_2.runs/synth_1
 # Command line: vivado.exe -log top_dut.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_dut.tcl
 # Log file: C:/Users/parkj/Desktop/250325_Uart_Sensor/project_2/project_2.runs/synth_1/top_dut.vds
