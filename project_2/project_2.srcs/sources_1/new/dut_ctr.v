@@ -28,7 +28,7 @@ module dut_ctr (
     localparam STOP = 4'b0111;      // 데이터 수신 완료
     localparam READ = 4'b1000;      // 기존 READ 상태 유지
 
-     // 타이밍 파라미터
+    // 타이밍 파라미터
     localparam TICK_SEC = 18;      // 18msec for start signal
     localparam WAIT_TIME = 30;     // 30msec for wait state
     localparam SYNC_CNT = 8;       // 80us for sync signals (10us tick 기준)
@@ -38,37 +38,40 @@ module dut_ctr (
     localparam STOP_CNT = 5;       // 종료 후 대기 시간
     localparam TIME_OUT = 100;     // 타임아웃 카운터
 
-    reg [1:0] state, next_state;
+    reg [3:0] state, next_state;
     reg [7:0] tick_count;
     reg [5:0] bit_count;
-    reg[39:0] received_data;
+    reg [39:0] received_data;
     reg data_bit;
     reg prev_dht_io;
+    reg [39:0] data_reg, data_next;
+    reg [7:0] count_reg;  // count_reg 추가
 
     // 상태 레지스터 업데이트
     always @(posedge clk or posedge rst) begin
         if (rst) begin
             state <= IDLE;
             tick_count <= 0;
-            bit_count <=0;
-            received_data <=0;
-            prev_dht_io <=1;
+            bit_count <= 0;
+            received_data <= 0;
+            prev_dht_io <= 1;
+            data_reg <= 0;
+            count_reg <= 0;
         end else begin
             state <= next_state;
             prev_dht_io <= dnt_io;
+            data_reg <= data_next;  // data_reg 업데이트 추가
 
-        if(tick_counter)
-            tick_count <= tick_count +1;
+            if(tick_counter)
+                tick_count <= tick_count + 1;
 
-            if(state == DATA_BIT && next_state == DATA_SYNC)begin
+            if(state == DATA_BIT && next_state == DATA_SYNC) begin
                 received_data <= {received_data[38:0], data_bit};
-                bit_count <= bit_count +1;
+                bit_count <= bit_count + 1;
             end
 
-        if(state != next_state)
-            tick_count <=0;
-
-
+            if(state != next_state)
+                tick_count <= 0;
         end
     end
 
@@ -100,7 +103,8 @@ module dut_ctr (
                     wait_state <= 1'b1;
                     read <= 1'b0;
                 end
-                READ: begin
+                // SYNC_LOW, SYNC_HIGH, DATA_SYNC, DATA_BIT, STOP 상태에서도 READ 신호 활성화
+                SYNC_LOW, SYNC_HIGH, DATA_SYNC, DATA_BIT, STOP, READ: begin
                     idle <= 1'b0;
                     start <= 1'b0;
                     wait_state <= 1'b0;
@@ -115,12 +119,14 @@ module dut_ctr (
             endcase
         end
     end
-        // 다음 상태 로직
+
+    // 다음 상태 로직
     always @(*) begin
         // 기본값 설정
         next_state = state;
         dnt_io = 1'b1;  // 기본값 HIGH
         data_bit = 1'b0; // 기본 데이터 비트 0
+        data_next = data_reg;  // 기본값 설정 추가
         
         case (state)
             IDLE: begin
@@ -153,6 +159,14 @@ module dut_ctr (
                     // 타임아웃 - 응답 없음
                     next_state = IDLE;
                 end
+                
+                // 추가된 데이터 처리 로직
+                if (count_reg < 40) begin
+                    data_next[bit_count] = 1'b0;
+                    data_next = {1'b0, data_reg[38:0]}; // 데이터 쉬프트
+                end else begin
+                    data_next[bit_count] = 1'b1;
+                end
             end
             
             SYNC_HIGH: begin
@@ -163,6 +177,14 @@ module dut_ctr (
                 end else if (tick_count >= TIME_OUT) begin
                     // 타임아웃
                     next_state = IDLE;
+                end
+                
+                // 추가된 데이터 처리 로직
+                if (count_reg < 40) begin
+                    data_next[bit_count] = 1'b0;
+                    data_next = {1'b0, data_reg[38:0]}; // 데이터 쉬프트
+                end else begin
+                    data_next[bit_count] = 1'b1;
                 end
             end
             
@@ -176,6 +198,14 @@ module dut_ctr (
                 end else if (tick_count >= TIME_OUT) begin
                     // 타임아웃
                     next_state = IDLE;
+                end
+                
+                // 추가된 데이터 처리 로직
+                if (count_reg < 40) begin
+                    data_next[bit_count] = 1'b0;
+                    data_next = {1'b0, data_reg[38:0]}; // 데이터 쉬프트
+                end else begin
+                    data_next[bit_count] = 1'b1;
                 end
             end
             
@@ -215,9 +245,7 @@ module dut_ctr (
         endcase
     end
 
-
-
-    // 출력 로직 (변경 없음)
+    // 출력 로직 추가
     always @(posedge clk) begin
         if (rst) begin
             sensor_data <= 0;
@@ -227,7 +255,7 @@ module dut_ctr (
             current_state <= state;
 
             if (state == STOP) begin
-                 dnt_sensor_data <= received_data[39:32];
+                dnt_sensor_data <= received_data[39:32];
             end
         end
     end
