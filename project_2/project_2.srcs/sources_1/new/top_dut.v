@@ -7,16 +7,23 @@ module top_dut(
     
     output [4:0] led,
     output fsm_error,
-    output dut_io
+    output dut_io,
+    
+    // FSM 상태 모니터링을 위한 출력 추가
+    output idle,
+    output start,
+    output wait_state,
+    output read
 );
-    // Internal signals
+    // 내부 신호
     wire tick_10msec;
     wire [3:0] current_state;
     wire [7:0] dnt_data;
     wire [7:0] dnt_sensor_data;
     wire sensor_data;
+    wire [4:0] led_status;  // led_status 와이어 추가
 
-    // DUT Controller instantiation
+    // DUT 컨트롤러 인스턴스
     dut_ctr U_DUT_CTR(  
         .clk(clk),
         .rst(rst),
@@ -26,17 +33,27 @@ module top_dut(
         .current_state(current_state),
         .dnt_data(dnt_data),
         .dnt_sensor_data(dnt_sensor_data),
-        .dnt_io(dut_io)
+        .dnt_io(dut_io),
+        
+        // FSM 상태 모니터링 출력 연결
+        .idle(idle),
+        .start(start),
+        .wait_state(wait_state),
+        .read(read)
     );
 
-    // Tick generator instantiation
+    // 틱 생성기 인스턴스
     tick_gen U_TICK_GEN(
         .clk(clk),
         .rst(rst),
         .tick_10msec(tick_10msec)
     );
     
-    // LED controller instantiation
+    // FSM 오류 감지 로직 개선 - 현재 state 기반
+    assign fsm_error = (current_state == 4'b1111) || 
+                       ((idle != 1) && (start != 1) && (wait_state != 1) && (read != 1));
+    
+    // LED 컨트롤러 수정 및 연결
     dnt_led U_DNT_LED(
         .clk(clk),
         .rst(rst),
@@ -44,20 +61,7 @@ module top_dut(
         .led_status(led_status),
         .led(led)
     );
-    
-    // FSM error detection (example implementation based on state conditions)
-    assign fsm_error = (current_state == 4'b1111); // Error if invalid state
 
 endmodule
-
-
-
-
-
-
-
-
-
-
     
 
