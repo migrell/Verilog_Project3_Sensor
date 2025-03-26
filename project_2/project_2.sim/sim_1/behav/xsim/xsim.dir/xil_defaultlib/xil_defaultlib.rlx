@@ -1,0 +1,10 @@
+0.7
+2020.2
+Nov 18 2020
+09:47:47
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.sim/sim_1/behav/xsim/glbl.v,1605673889,verilog,,,,glbl,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sim_1/new/tb.v,1742968878,verilog,,,,tb_top_dut,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/dnt_led.v,1742965889,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/dut_ctr.v,,dnt_led,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/dut_ctr.v,1742965739,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/tick_gen.v,,dut_ctr,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/tick_gen.v,1742965799,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/top_dut.v,,tick_gen,,,,,,,,
+C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sources_1/new/top_dut.v,1742965828,verilog,,C:/Users/kccistc/Desktop/250325_Verilog_Project3/250325_Uart_Sensor/project_2/project_2.srcs/sim_1/new/tb.v,,top_dut,,,,,,,,
