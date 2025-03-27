@@ -166,6 +166,137 @@ module uart_fifo_top (
     );
 endmodule
 
+module uart_tx (
+    input clk,
+    input rst,
+    input tick,
+    input start_trigger,
+    input [7:0] data_in,
+    output o_tx_done,
+    output o_tx,
+    // 디버깅용 출력 추가
+    output [2:0] o_state,
+    output [2:0] o_bit_count,
+    output [3:0] o_tick_count
+);
+
+    // 상태 정의 - SEND 제거 및 단순화
+    localparam IDLE = 3'h0, START = 3'h1, DATA = 3'h2, STOP = 3'h3;
+    
+    reg [2:0] state, next;
+    reg tx_reg, tx_next;
+    reg [2:0] bit_count, bit_count_next;
+    reg [3:0] tick_count_reg, tick_count_next;
+    reg [7:0] temp_data_reg, temp_data_next;
+    reg tx_done_reg, tx_done_next;
+    
+    // 출력 할당
+    assign o_tx = tx_reg;
+    assign o_tx_done = tx_done_reg;
+    // 디버깅용 출력 할당
+    assign o_state = state;
+    assign o_bit_count = bit_count;
+    assign o_tick_count = tick_count_reg;
+
+    // 순차 로직 - 상태 및 레지스터 업데이트
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            state <= IDLE;
+            tx_reg <= 1'b1;         // 리셋시 TX는 항상 High
+            tx_done_reg <= 1'b0;
+            bit_count <= 3'b000;
+            tick_count_reg <= 4'b0000;
+            temp_data_reg <= 8'h00;
+        end else begin
+            state <= next;
+            tx_reg <= tx_next;      // tx_next가 tx_reg로 제대로 업데이트되는지 확인
+            tx_done_reg <= tx_done_next;
+            bit_count <= bit_count_next;
+            tick_count_reg <= tick_count_next;
+            temp_data_reg <= temp_data_next;
+        end
+    end
+
+    // 조합 로직 - 다음 상태 및 출력 결정
+    always @(*) begin
+        // 기본값 설정 - 엣지 케이스 방지
+        next = state;
+        tx_next = tx_reg;  // 중요: 기본값으로 현재 값 유지
+        tx_done_next = 1'b0; // tx_done 신호 기본값 변경 (매번 초기화)
+        tick_count_next = tick_count_reg;
+        bit_count_next = bit_count;
+        temp_data_next = temp_data_reg;
+        
+        case (state)
+            IDLE: begin
+                tx_next = 1'b1;        // 명시적으로 1 할당
+                tx_done_next = 1'b0;
+                tick_count_next = 4'b0000;
+                bit_count_next = 3'b000;
+                
+                if (start_trigger) begin
+                    next = START;
+                    temp_data_next = data_in;
+                end
+            end
+            
+            START: begin
+                tx_next = 1'b0;  // 시작 비트는 반드시 0
+                
+                if (tick) begin
+                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
+                        next = DATA;
+                        tick_count_next = 4'b0000;
+                    end else begin
+                        tick_count_next = tick_count_reg + 4'b0001;
+                    end
+                end
+            end
+            
+            DATA: begin
+                // 데이터 비트를 tx_next에 할당 (LSB부터 전송)
+                tx_next = temp_data_reg[bit_count];
+                
+                if (tick) begin
+                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
+                        tick_count_next = 4'b0000;
+                        
+                        if (bit_count == 3'b111) begin  // 비트 7에 도달 (8비트 모두 전송)
+                            next = STOP;
+                        end else begin
+                            bit_count_next = bit_count + 3'b001;
+                        end
+                    end else begin
+                        tick_count_next = tick_count_reg + 4'b0001;
+                    end
+                end
+            end
+            
+            STOP: begin
+                tx_next = 1'b1;  // 정지 비트는 반드시 1
+                
+                if (tick) begin
+                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
+                        next = IDLE;
+                        tx_done_next = 1'b1;  // 전송 완료
+                        tick_count_next = 4'b0000;
+                    end else begin
+                        tick_count_next = tick_count_reg + 4'b0001;
+                    end
+                end
+            end
+            
+            default: begin
+                next = IDLE;
+                tx_next = 1'b1;
+                tx_done_next = 1'b0;
+                tick_count_next = 4'b0000;
+                bit_count_next = 3'b000;
+            end
+        endcase
+    end
+endmodule
+
 
 // module uart_fifo_top (
 //     // 시스템 신호
