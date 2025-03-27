@@ -1,4 +1,3 @@
-
 `timescale 1ns / 1ps
 
 module stopwatch_dp(
@@ -7,8 +6,8 @@ module stopwatch_dp(
     input run,
     input clear,
     output [6:0] msec,
-    output [5:0] sec,
-    output [5:0] min,
+    output [6:0] sec,
+    output [6:0] min,
     output [4:0] hour
     );
 

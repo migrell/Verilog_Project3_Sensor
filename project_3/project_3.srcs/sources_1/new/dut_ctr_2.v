@@ -1,7 +1,3 @@
-
-// ----------------------
-// [3] DUT Controller (FSM)
-// ----------------------
 module dut_ctr(
     input clk,
     input rst,
@@ -25,6 +21,7 @@ module dut_ctr(
     output reg stop_out,
     output reg read
 );
+
     localparam IDLE = 4'b0000;
     localparam START = 4'b0001;
     localparam WAIT = 4'b0010;
@@ -203,8 +200,6 @@ module dut_ctr(
         end
     end
 endmodule
-
-
 
 
 

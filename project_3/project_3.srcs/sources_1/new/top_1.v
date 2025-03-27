@@ -83,5 +83,4 @@ module ultrasonic_distance_meter(
         .fnd_font(fnd_font),
         .fnd_comm(fnd_comm)
     );
-
 endmodule

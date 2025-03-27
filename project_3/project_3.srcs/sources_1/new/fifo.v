@@ -1,4 +1,3 @@
-
 `timescale 1ns / 1ps
 
 module FIFO (
@@ -36,8 +35,6 @@ module FIFO (
     );
     
 endmodule
-
-
 
 `timescale 1ns / 1ps
 
@@ -141,6 +138,13 @@ module FIFO_control_unit (
                     wptr_next = (wptr_reg + 1) % 16;
                     rptr_next = (rptr_reg + 1) % 16;
                 end
+            end
+            default: begin // 2'b00 case (no read, no write)
+                // No change to pointers or status flags
+                wptr_next = wptr_reg;
+                rptr_next = rptr_reg;
+                full_next = full_reg;
+                empty_next = empty_reg;
             end
         endcase
     end

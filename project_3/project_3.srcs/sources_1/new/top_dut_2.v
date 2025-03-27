@@ -29,6 +29,10 @@ module top_dut (
     wire [7:0] dnt_sensor_data;
     wire sensor_data;
 
+    
+    wire btn_start_clean;
+    wire btn_next_clean;
+
     // DUT 컨트롤러 인스턴스
     dut_ctr U_DUT_CTR (
         .clk(clk),
@@ -61,8 +65,6 @@ module top_dut (
         .tick_10msec(tick_10msec)
     );
 
-    wire btn_start_clean;
-    wire btn_next_clean;
 
     debounce_btn U_DEBOUNCE_START (
         .clk(clk),
