@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Thu Mar 27 12:41:09 2025
+# Process ID: 16628
+# Current directory: C:/Users/kccistc/Desktop/250325_Uart_Sensor-1/project_3/project_3.runs/impl_1
+# Command line: vivado.exe -log top_stopwatch.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source top_stopwatch.tcl -notrace
+# Log file: C:/Users/kccistc/Desktop/250325_Uart_Sensor-1/project_3/project_3.runs/impl_1/top_stopwatch.vdi
+# Journal file: C:/Users/kccistc/Desktop/250325_Uart_Sensor-1/project_3/project_3.runs/impl_1\vivado.jou
+#-----------------------------------------------------------
+source top_stopwatch.tcl -notrace
