@@ -7,10 +7,11 @@ module fnd_controller (
     input [5:0] sec,
     input [5:0] min,
     input [4:0] hour,
-    input [2:0] current_state,  // Add this line
+    input [2:0] current_state,
     output [7:0] fnd_font,
     output [3:0] fnd_comm
 );
+
     wire [3:0] w_digit_msec_1, w_digit_msec_10,
                w_digit_sec_1, w_digit_sec_10,
                w_digit_min_1, w_digit_min_10,
@@ -27,185 +28,135 @@ module fnd_controller (
             dot_counter  <= 0;
             r_dot_toggle <= 0;
         end else begin
-            if (dot_counter == 25_000_000 - 1) begin  // 0.5초마다 (100MHz 기준)
+            if (dot_counter == 25_000_000 - 1) begin
                 dot_counter  <= 0;
-                r_dot_toggle <= ~r_dot_toggle;  // 도트 상태 반전
+                r_dot_toggle <= ~r_dot_toggle;
             end else begin
                 dot_counter <= dot_counter + 1;
             end
         end
     end
 
-    // 클럭 분주 (100Hz 생성)
+    // 클럭 분주 (100Hz)
     clk_divider U_clk_divider (
-        .clk  (clk),
+        .clk(clk),
         .reset(reset),
         .o_clk(w_clk_100hz)
     );
 
-    // 디스플레이 스캔 카운터
+    // 디스플레이 선택
     counter_8 U_counter_8 (
-        .clk  (w_clk_100hz),
+        .clk(w_clk_100hz),
         .reset(reset),
         .o_sel(w_seg_sel)
     );
 
-    // 디스플레이 선택 디코더
     decoder_3x8 U_decoder (
         .seg_select(w_seg_sel),
-        .seg_comm  (fnd_comm)
+        .seg_comm(fnd_comm)
     );
 
-
-
-    // msec 값 분할
-    digit_splitter #(
-        .BIT_WIDTH(7)
-    ) U_msec_ds (
+    // BCD 분리기
+    digit_splitter #(.BIT_WIDTH(7)) U_msec_ds (
         .bcd(msec),
         .digit_1(w_digit_msec_1),
         .digit_10(w_digit_msec_10)
     );
 
-    // sec 값 분할
-    digit_splitter #(
-        .BIT_WIDTH(6)
-    ) U_sec_ds (
+    digit_splitter #(.BIT_WIDTH(6)) U_sec_ds (
         .bcd(sec),
         .digit_1(w_digit_sec_1),
         .digit_10(w_digit_sec_10)
     );
 
-    // min 값 분할
-    digit_splitter #(
-        .BIT_WIDTH(6)
-    ) U_min_ds (
+    digit_splitter #(.BIT_WIDTH(6)) U_min_ds (
         .bcd(min),
         .digit_1(w_digit_min_1),
         .digit_10(w_digit_min_10)
     );
 
-    // hour 값 분할
-    digit_splitter #(
-        .BIT_WIDTH(5)
-    ) U_hour_ds (
+    digit_splitter #(.BIT_WIDTH(5)) U_hour_ds (
         .bcd(hour),
         .digit_1(w_digit_hour_1),
         .digit_10(w_digit_hour_10)
     );
 
-    // 멀티플렉서에서 선택된 BCD 값
+    // 센서 값 분리
+    wire [7:0] sensor_value = {hour[4:0], msec[6:3]};  // 센서 값 구성
+    wire [3:0] sensor_ones = msec % 10;                // 1의 자리
+    wire [3:0] sensor_tens = msec / 10;                // 10의 자리
+
+    // FND 표시 숫자와 도트 설정
     reg [3:0] r_bcd;
     reg dot_out;
 
-    // FSM 상태에 따른 디스플레이 로직 수정
-    // 멀티플렉서 로직 수정 - FSM 상태에 맞게 조정
-
     always @(*) begin
-        // 기본값
         r_bcd   = 4'h0;
-        dot_out = 1'b1;  // 도트 OFF (active low)
+        dot_out = 1'b1;
 
         case (current_state)
-            2'b00: begin  // STATE_0: Stopwatch Mode Msec:Sec
+            3'b000: begin  // Stopwatch Mode Msec:Sec
                 case (w_seg_sel[1:0])
-                    2'b00: begin
-                        r_bcd   = w_digit_sec_1;
-                        dot_out = 1'b1;
-                    end  // 밀리초 1의 자리
-                    2'b01: begin
-                        r_bcd   = w_digit_sec_10;
-                        dot_out = 1'b1;
-                    end  // 밀리초 10의 자리
-                    2'b10: begin
-                        r_bcd   = w_digit_msec_1;
-                        dot_out = ~r_dot_toggle;
-                    end  // 초 1의 자리, 도트 깜빡임
-                    2'b11: begin
-                        r_bcd   = w_digit_msec_10;
-                        dot_out = 1'b1;
-                    end  // 초 10의 자리
+                    2'b00: begin r_bcd = w_digit_sec_1;  dot_out = 1'b1; end
+                    2'b01: begin r_bcd = w_digit_sec_10; dot_out = 1'b1; end
+                    2'b10: begin r_bcd = w_digit_msec_1; dot_out = ~r_dot_toggle; end
+                    2'b11: begin r_bcd = w_digit_msec_10;dot_out = 1'b1; end
                 endcase
             end
-
-            2'b01: begin  // STATE_1: Stopwatch Mode Hour:Min
+            3'b001: begin  // Stopwatch Mode Hour:Min
                 case (w_seg_sel[1:0])
-                    2'b00: begin
-                        r_bcd   = w_digit_min_1;
-                        dot_out = 1'b1;
-                    end  // 분 1의 자리
-                    2'b01: begin
-                        r_bcd   = w_digit_min_10;
-                        dot_out = 1'b1;
-                    end  // 분 10의 자리
-                    2'b10: begin
-                        r_bcd   = w_digit_hour_1;
-                        dot_out = ~r_dot_toggle;
-                    end  // 시 1의 자리, 도트 깜빡임
-                    2'b11: begin
-                        r_bcd   = w_digit_hour_10;
-                        dot_out = 1'b1;
-                    end  // 시 10의 자리
+                    2'b00: begin r_bcd = w_digit_min_1;  dot_out = 1'b1; end
+                    2'b01: begin r_bcd = w_digit_min_10; dot_out = 1'b1; end
+                    2'b10: begin r_bcd = w_digit_hour_1; dot_out = ~r_dot_toggle; end
+                    2'b11: begin r_bcd = w_digit_hour_10;dot_out = 1'b1; end
                 endcase
             end
-
-            2'b10: begin  // STATE_2: Clock Mode Sec:Msec
+            3'b010: begin  // Clock Mode Sec:Msec
                 case (w_seg_sel[1:0])
-                    2'b00: begin
-                        r_bcd   = w_digit_msec_1;
-                        dot_out = 1'b1;
-                    end  // 초 1의 자리
-                    2'b01: begin
-                        r_bcd   = w_digit_msec_10;
-                        dot_out = 1'b1;
-                    end  // 초 10의 자리
-                    2'b10: begin
-                        r_bcd   = w_digit_sec_1;
-                        dot_out = ~r_dot_toggle;
-                    end  // 밀리초 1의 자리, 도트 깜빡임
-                    2'b11: begin
-                        r_bcd   = w_digit_sec_10;
-                        dot_out = 1'b1;
-                    end  // 밀리초 10의 자리
+                    2'b00: begin r_bcd = w_digit_msec_1; dot_out = 1'b1; end
+                    2'b01: begin r_bcd = w_digit_msec_10;dot_out = 1'b1; end
+                    2'b10: begin r_bcd = w_digit_sec_1;  dot_out = ~r_dot_toggle; end
+                    2'b11: begin r_bcd = w_digit_sec_10; dot_out = 1'b1; end
                 endcase
             end
-
-            2'b11: begin  // STATE_3: Clock Mode Hour:Min
+            3'b011: begin  // Clock Mode Hour:Min
                 case (w_seg_sel[1:0])
-                    2'b00: begin
-                        r_bcd   = w_digit_min_1;
-                        dot_out = 1'b1;
-                    end  // 분 1의 자리
-                    2'b01: begin
-                        r_bcd   = w_digit_min_10;
-                        dot_out = 1'b1;
-                    end  // 분 10의 자리
-                    2'b10: begin
-                        r_bcd   = w_digit_hour_1;
-                        dot_out = ~r_dot_toggle;
-                    end  // 시 1의 자리, 도트 깜빡임
-                    2'b11: begin
-                        r_bcd   = w_digit_hour_10;
-                        dot_out = 1'b1;
-                    end  // 시 10의 자리
+                    2'b00: begin r_bcd = w_digit_min_1;  dot_out = 1'b1; end
+                    2'b01: begin r_bcd = w_digit_min_10; dot_out = 1'b1; end
+                    2'b10: begin r_bcd = w_digit_hour_1; dot_out = ~r_dot_toggle; end
+                    2'b11: begin r_bcd = w_digit_hour_10;dot_out = 1'b1; end
                 endcase
+            end
+            3'b100, 3'b101: begin  // 초음파 센서 모드 (CM/Inch)
+                case (w_seg_sel[1:0])
+                    2'b00: begin r_bcd = sensor_ones; dot_out = 1'b1; end
+                    2'b01: begin r_bcd = sensor_tens; dot_out = 1'b1; end
+                    default: begin r_bcd = 4'd0; dot_out = 1'b1; end
+                endcase
+            end
+            3'b110, 3'b111: begin  // 온습도 모드
+                case (w_seg_sel[1:0])
+                    2'b00: begin r_bcd = sensor_ones; dot_out = 1'b1; end
+                    2'b01: begin r_bcd = sensor_tens; dot_out = 1'b1; end
+                    default: begin r_bcd = 4'd0; dot_out = 1'b1; end
+                endcase
+            end
+            default: begin
+                r_bcd = 4'd0;
+                dot_out = 1'b1;
             end
         endcase
     end
 
-
     wire [6:0] seg_pattern;
-    // BCD를 7세그먼트로 변환
     bcdtoseg U_bcdtoseg (
         .bcd(r_bcd),
         .seg(seg_pattern)
     );
 
-    // 최종 출력: 세그먼트 패턴 + 도트
-    assign fnd_font = {dot_out, seg_pattern};  // MSB가 도트
+    assign fnd_font = {dot_out, seg_pattern};  // MSB: 도트
 
 endmodule
-
 
 // --------------------------------------------------------------//
 

@@ -3,8 +3,9 @@ module top_stopwatch (
     input reset,
     input btn_run,  // 좌측 버튼 - 스톱워치 실행/정지/시 설정
     input btn_clear,  // 우측 버튼 - 스톱워치 초기화
-    input btn_sec,  // 아래쪽 버튼 - 초 설정 (시계 모드)
-    input btn_min,  // 위쪽 버튼 - 분 설정 (시계 모드)
+    // input btn_sec,  // 아래쪽 버튼 - 초 설정 (시계 모드) - 사용하지 않음
+    // input btn_min,  // 위쪽 버튼 - 분 설정 (시계 모드) - 사용하지 않음
+    input debounced_btn,  // 디바운싱된 입력 (U17)
     input [2:0] hw_sw,  // 하드웨어 스위치 입력 (3비트로 확장)
     input rx,  // UART RX 입력
     output tx,  // UART TX 출력
@@ -17,9 +18,13 @@ module top_stopwatch (
     output [8:0] led  // 9비트로 확장
 );
     // 디바운싱된 버튼 신호들
-    wire w_btn_run, w_btn_clear, w_btn_min, w_btn_sec;
+    wire w_btn_run, w_btn_clear;
     // 모드별 버튼 분기
     wire w_btn_hour;
+
+    // 디바운싱된 버튼을 btn_next로 사용
+    wire btn_next;
+    assign btn_next = debounced_btn;  // debounced_btn을 btn_next로 연결
 
     // FSM 신호들 (3비트로 확장)
     wire [2:0] current_state;
@@ -28,7 +33,7 @@ module top_stopwatch (
 
     // 스톱워치 제어 신호
     wire w_run, w_clear;
-
+    
     // 시간 데이터 신호들 (스톱워치와 시계)
     wire [6:0] s_msec, c_msec, disp_msec;
     wire [5:0] s_sec, s_min, c_sec, c_min, disp_sec, disp_min;
@@ -65,15 +70,8 @@ module top_stopwatch (
 
     // 최종 버튼 신호 (하드웨어 버튼 + UART 명령)
     wire final_btn_hour = (w_btn_hour | uart_btn_hour) & is_clock_mode;
-    wire final_btn_min = (w_btn_min | uart_btn_min) & is_clock_mode;
-    wire final_btn_sec = (w_btn_sec | uart_btn_sec) & is_clock_mode;
-
-    wire [7:0] sensor_value;
-
-    // 모드에 따른 버튼 기능 분기
-    assign w_btn_hour = w_btn_run & is_clock_mode;
-
-    assign sensor_value = dnt_sensor_data;
+    wire final_btn_min = (uart_btn_min) & is_clock_mode;
+    wire final_btn_sec = (uart_btn_sec) & is_clock_mode;
 
     // 버튼 디바운싱 모듈들 (btn_type 파라미터 적용)
     btn_debounce U_Btn_DB_RUN (
@@ -94,26 +92,6 @@ module top_stopwatch (
         .rx_data(w_rx_data),
         .btn_type(3'd1),
         .o_btn(w_btn_clear)
-    );
-
-    btn_debounce U_Btn_DB_SEC (
-        .clk(clk),
-        .reset(reset),
-        .i_btn(btn_sec),
-        .rx_done(w_rx_done),
-        .rx_data(w_rx_data),
-        .btn_type(3'd2),
-        .o_btn(w_btn_sec)
-    );
-
-    btn_debounce U_Btn_DB_MIN (
-        .clk(clk),
-        .reset(reset),
-        .i_btn(btn_min),
-        .rx_done(w_rx_done),
-        .rx_data(w_rx_data),
-        .btn_type(3'd3),
-        .o_btn(w_btn_min)
     );
 
     // UART + FIFO + CU 모듈 추가
@@ -215,7 +193,7 @@ module top_stopwatch (
         .rst(reset),
         .btn_start(w_btn_run & is_temp_humid_mode | temp_humid_enable),
         .tick_counter(w_tick_10msec),
-        .btn_next(w_btn_min),
+        .btn_next(btn_next),  // debounced_btn을 직접 연결
         .sensor_data(sensor_data),
         .current_state(dut_current_state),
         .dnt_data(dnt_data),
@@ -244,6 +222,7 @@ module top_stopwatch (
         .clk_sec(c_sec),
         .clk_min(c_min),
         .clk_hour(c_hour),
+        .sensor_value(dnt_sensor_data),  // 센서 값 연결 추가
         .o_msec(disp_msec),
         .o_sec(disp_sec),
         .o_min(disp_min),
@@ -251,18 +230,16 @@ module top_stopwatch (
     );
 
     // FND 컨트롤러
-
-    // 원래 있던 fnd_controller는 이렇게 바꿔줘
     fnd_controller U_FND_CTRL (
         .clk(clk),
         .reset(reset),
         .sw_mode(is_clock_mode),
         .sw(uart_sw),
         .current_state(current_state),
-        .msec(is_temp_humid_mode ? 0 : disp_msec),
-        .sec(is_temp_humid_mode ? 0 : disp_sec),
-        .min(is_temp_humid_mode ? 0 : disp_min),
-        .hour( is_temp_humid_mode ? sensor_value[7:4] : disp_hour ),  // 상위 4비트 (십의 자리)
+        .msec(is_ultrasonic_mode || is_temp_humid_mode ? dnt_sensor_data : disp_msec),
+        .sec(is_ultrasonic_mode || is_temp_humid_mode ? 6'd0 : disp_sec),
+        .min(is_ultrasonic_mode || is_temp_humid_mode ? 6'd0 : disp_min),
+        .hour(is_ultrasonic_mode || is_temp_humid_mode ? dnt_sensor_data[3:0] : disp_hour),
         .fnd_font(fnd_font),
         .fnd_comm(fnd_comm)
     );
