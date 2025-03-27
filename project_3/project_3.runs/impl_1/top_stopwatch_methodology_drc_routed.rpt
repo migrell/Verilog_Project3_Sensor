@@ -1,8 +1,8 @@
 Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2020.2 (win64) Build 3064766 Wed Nov 18 09:12:45 MST 2020
-| Date         : Thu Mar 27 12:42:00 2025
-| Host         : DESKTOP-7CFQ9ND running 64-bit major release  (build 9200)
+| Date         : Thu Mar 27 19:45:58 2025
+| Host         : parkjiho running 64-bit major release  (build 9200)
 | Command      : report_methodology -file top_stopwatch_methodology_drc_routed.rpt -pb top_stopwatch_methodology_drc_routed.pb -rpx top_stopwatch_methodology_drc_routed.rpx
 | Design       : top_stopwatch
 | Device       : xc7a35tcpg236-1
@@ -23,13 +23,13 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
              Max violations: <unlimited>
-             Violations found: 44
+             Violations found: 42
 +-----------+------------------+-------------------------------------------------+------------+
 | Rule      | Severity         | Description                                     | Violations |
 +-----------+------------------+-------------------------------------------------+------------+
 | TIMING-17 | Critical Warning | Non-clocked sequential cell                     | 2          |
-| TIMING-18 | Warning          | Missing input or output delay                   | 29         |
-| XDCC-5    | Warning          | User Non-Timing constraint/property overwritten | 13         |
+| TIMING-18 | Warning          | Missing input or output delay                   | 28         |
+| XDCC-5    | Warning          | User Non-Timing constraint/property overwritten | 12         |
 +-----------+------------------+-------------------------------------------------+------------+
 
 2. REPORT DETAILS
@@ -51,140 +51,135 @@ Related violations: <none>
 
 TIMING-18#2 Warning
 Missing input or output delay  
-An input delay is missing on btn_min relative to clock(s) sys_clk_pin
+An input delay is missing on btn_run relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#3 Warning
 Missing input or output delay  
-An input delay is missing on btn_run relative to clock(s) sys_clk_pin
+An input delay is missing on debounced_btn relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#4 Warning
 Missing input or output delay  
-An input delay is missing on btn_sec relative to clock(s) sys_clk_pin
+An input delay is missing on echo relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#5 Warning
 Missing input or output delay  
-An input delay is missing on echo relative to clock(s) sys_clk_pin
+An input delay is missing on hw_sw[0] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#6 Warning
 Missing input or output delay  
-An input delay is missing on hw_sw[0] relative to clock(s) sys_clk_pin
+An input delay is missing on hw_sw[1] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#7 Warning
 Missing input or output delay  
-An input delay is missing on hw_sw[1] relative to clock(s) sys_clk_pin
+An input delay is missing on hw_sw[2] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#8 Warning
 Missing input or output delay  
-An input delay is missing on hw_sw[2] relative to clock(s) sys_clk_pin
+An input delay is missing on reset relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#9 Warning
 Missing input or output delay  
-An input delay is missing on reset relative to clock(s) sys_clk_pin
+An input delay is missing on rx relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#10 Warning
 Missing input or output delay  
-An input delay is missing on rx relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[0] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#11 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[0] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[1] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#12 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[1] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[2] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#13 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[2] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[3] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#14 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[3] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[4] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#15 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[4] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[5] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#16 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[5] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[6] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#17 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[6] relative to clock(s) sys_clk_pin
+An output delay is missing on fnd_font[7] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#18 Warning
 Missing input or output delay  
-An output delay is missing on fnd_font[7] relative to clock(s) sys_clk_pin
+An output delay is missing on led[0] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#19 Warning
 Missing input or output delay  
-An output delay is missing on led[0] relative to clock(s) sys_clk_pin
+An output delay is missing on led[1] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#20 Warning
 Missing input or output delay  
-An output delay is missing on led[1] relative to clock(s) sys_clk_pin
+An output delay is missing on led[2] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#21 Warning
 Missing input or output delay  
-An output delay is missing on led[2] relative to clock(s) sys_clk_pin
+An output delay is missing on led[3] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#22 Warning
 Missing input or output delay  
-An output delay is missing on led[3] relative to clock(s) sys_clk_pin
+An output delay is missing on led[4] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#23 Warning
 Missing input or output delay  
-An output delay is missing on led[4] relative to clock(s) sys_clk_pin
+An output delay is missing on led[5] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#24 Warning
 Missing input or output delay  
-An output delay is missing on led[5] relative to clock(s) sys_clk_pin
+An output delay is missing on led[6] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#25 Warning
 Missing input or output delay  
-An output delay is missing on led[6] relative to clock(s) sys_clk_pin
+An output delay is missing on led[7] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#26 Warning
 Missing input or output delay  
-An output delay is missing on led[7] relative to clock(s) sys_clk_pin
+An output delay is missing on led[8] relative to clock(s) sys_clk_pin
 Related violations: <none>
 
 TIMING-18#27 Warning
 Missing input or output delay  
-An output delay is missing on led[8] relative to clock(s) sys_clk_pin
-Related violations: <none>
-
-TIMING-18#28 Warning
-Missing input or output delay  
 An output delay is missing on trigger relative to clock(s) sys_clk_pin
 Related violations: <none>
 
-TIMING-18#29 Warning
+TIMING-18#28 Warning
 Missing input or output delay  
 An output delay is missing on tx relative to clock(s) sys_clk_pin
 Related violations: <none>
@@ -192,92 +187,85 @@ Related violations: <none>
 XDCC-5#1 Warning
 User Non-Timing constraint/property overwritten  
 A new XDC property IOSTANDARD on btn_clear overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 45)
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 46)
 Related violations: <none>
 
 XDCC-5#2 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on btn_min overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 46)
+A new XDC property IOSTANDARD on btn_run overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 45)
 Related violations: <none>
 
 XDCC-5#3 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on btn_run overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 43)
+A new XDC property IOSTANDARD on debounced_btn overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 44)
 Related violations: <none>
 
 XDCC-5#4 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on btn_sec overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 47)
+A new XDC property IOSTANDARD on dht_data overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 72)
 Related violations: <none>
 
 XDCC-5#5 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on dht_data overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 73)
+A new XDC property IOSTANDARD on echo overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 70)
 Related violations: <none>
 
 XDCC-5#6 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on echo overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 71)
+A new XDC property IOSTANDARD on hw_sw[0] overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 11)
 Related violations: <none>
 
 XDCC-5#7 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on hw_sw[0] overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 11)
+A new XDC property IOSTANDARD on hw_sw[1] overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 12)
 Related violations: <none>
 
 XDCC-5#8 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on hw_sw[1] overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 12)
+A new XDC property IOSTANDARD on hw_sw[2] overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 13)
 Related violations: <none>
 
 XDCC-5#9 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on hw_sw[2] overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 13)
+A new XDC property IOSTANDARD on reset overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 42)
 Related violations: <none>
 
 XDCC-5#10 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on reset overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 42)
+A new XDC property IOSTANDARD on rx overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 66)
 Related violations: <none>
 
 XDCC-5#11 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on rx overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 67)
+A new XDC property IOSTANDARD on trigger overrides a previous user property.
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 71)
 Related violations: <none>
 
 XDCC-5#12 Warning
 User Non-Timing constraint/property overwritten  
-A new XDC property IOSTANDARD on trigger overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 72)
-Related violations: <none>
-
-XDCC-5#13 Warning
-User Non-Timing constraint/property overwritten  
 A new XDC property IOSTANDARD on tx overrides a previous user property.
-New Source: D:/XDC/Basys-3-Master.xdc (Line: 80)
-Previous Source: D:/XDC/Basys-3-Master.xdc (Line: 68)
+New Source: C:/verilog/Basys-3-Master.xdc (Line: 78)
+Previous Source: C:/verilog/Basys-3-Master.xdc (Line: 67)
 Related violations: <none>
 
 
