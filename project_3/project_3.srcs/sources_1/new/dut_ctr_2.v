@@ -37,6 +37,12 @@ module dut_ctr(
     reg [3:0] prev_state;
     reg [5:0] bit_count;
     reg [39:0] received_data;
+    
+    // 온습도 데이터 저장용 변수 추가
+    reg [7:0] temperature;  // 온도 저장
+    reg [7:0] humidity;     // 습도 저장
+    reg data_ready;         // 데이터 준비 완료 플래그
+    reg is_temp_display;    // 온도/습도 표시 전환 플래그
 
     // 버튼 엣지 감지
     reg [2:0] btn_sync;
@@ -54,6 +60,11 @@ module dut_ctr(
     // 펄스 폭 확장을 위한 변수
     reg [19:0] pulse_width_counter;
     reg pulse_active;
+    
+    // 데이터 샘플링 관련 변수
+    reg [1:0] sampling_state; // 0: 대기, 1: 샘플링 중, 2: 샘플링 완료
+    reg [7:0] bit_value_counter; // 비트 값을 결정하기 위한 카운터
+    reg sampled_bit; // 샘플링된 비트 값
 
     // 엣지 감지
     always @(posedge clk or posedge rst) begin
@@ -95,6 +106,13 @@ module dut_ctr(
             ready_to_display <= 0;
             pulse_width_counter <= 0;
             pulse_active <= 0;
+            temperature <= 8'd25;  // 초기 온도값 (25°C)
+            humidity <= 8'd50;     // 초기 습도값 (50%)
+            data_ready <= 0;
+            is_temp_display <= 1;  // 초기에는 온도 표시
+            sampling_state <= 0;
+            bit_value_counter <= 0;
+            sampled_bit <= 0;
 
             // 출력 초기화
             idle <= 1;
@@ -149,7 +167,22 @@ module dut_ctr(
                     sensor_data <= 0;
                 end
             end
-        // FSM 상태 전환 로직
+            
+            // 온도/습도 표시 전환 로직
+            if (next_btn_edge && state == IDLE && data_ready) begin
+                is_temp_display <= ~is_temp_display;
+                
+                // 표시할 데이터 업데이트
+                if (~is_temp_display) begin
+                    // 온도를 표시
+                    dnt_sensor_data <= temperature;
+                end else begin
+                    // 습도를 표시
+                    dnt_sensor_data <= humidity;
+                end
+            end
+
+            // FSM 상태 전환 로직
             case (state)
                 IDLE: begin
                     idle <= 1;
@@ -160,6 +193,7 @@ module dut_ctr(
                         delay_counter <= 0;
                         bit_count <= 0;
                         bit_timeout_counter <= 0;
+                        data_ready <= 0;  // 새 데이터 수집 시작
                     end
                 end
                 
@@ -211,6 +245,8 @@ module dut_ctr(
                         state <= DATA_BIT;
                         delay_counter <= 0;
                         bit_timeout_counter <= 0;
+                        sampling_state <= 0;  // 샘플링 대기 상태
+                        bit_value_counter <= 0;
                     end
                 end
                 
@@ -218,19 +254,67 @@ module dut_ctr(
                     data_bit_out <= 1;
                     dnt_io <= 1;
                     
-                    if (next_btn_edge || bit_timeout_counter >= 30) begin
-                        // 시뮬레이션을 위해 수신 데이터에 항상 1 추가
-                        received_data <= {received_data[38:0], 1'b1};
+                    // 실제 하드웨어에서는 다음과 같이 비트를 샘플링함
+                    // 여기서는 시뮬레이션을 위해 랜덤한 비트 생성
+                    case (sampling_state)
+                        0: begin  // 샘플링 대기
+                            if (delay_counter >= 10) begin
+                                sampling_state <= 1;
+                                bit_value_counter <= 0;
+                            end
+                        end
                         
-                        // 수정된 부분: 데이터 수신 시 펄스 폭 확장 로직 추가
-                        sensor_data <= 1;
-                        pulse_active <= 1;
-                        pulse_width_counter <= 0;
+                        1: begin  // 샘플링 중
+                            // 시뮬레이션: 비트 카운트에 따라 다른 패턴 생성
+                            if (bit_value_counter < 100) begin
+                                bit_value_counter <= bit_value_counter + 1;
+                            end else begin
+                                sampling_state <= 2;
+                                // 비트 값 결정 (여기서는 비트 카운트에 따라 다양한 패턴 생성)
+                                if (bit_count < 8) 
+                                    sampled_bit <= bit_count[0]; // 첫 8비트는 습도 정수부
+                                else if (bit_count < 16)
+                                    sampled_bit <= ~bit_count[0]; // 다음 8비트는 습도 소수부
+                                else if (bit_count < 24)
+                                    sampled_bit <= bit_count[1]; // 다음 8비트는 온도 정수부
+                                else
+                                    sampled_bit <= ~bit_count[1]; // 마지막 8비트는 온도 소수부
+                            end
+                        end
                         
-                        bit_count <= bit_count + 1;
-                        delay_counter <= 0;
-                        bit_timeout_counter <= 0;
-                        state <= STOP;
+                        2: begin  // 샘플링 완료
+                            // 다음 비트로 진행
+                            received_data <= {received_data[38:0], sampled_bit};
+                            
+                            // 펄스 생성 (실제 신호 시뮬레이션)
+                            sensor_data <= 1;
+                            pulse_active <= 1;
+                            pulse_width_counter <= 0;
+                            
+                            bit_count <= bit_count + 1;
+                            delay_counter <= 0;
+                            bit_timeout_counter <= 0;
+                            sampling_state <= 0;
+                            state <= STOP;
+                        end
+                    endcase
+                    
+                    // 타임아웃 또는 next 버튼으로 강제 진행 (디버깅용)
+                    if (next_btn_edge || bit_timeout_counter >= 150) begin
+                        // 강제로 샘플링 종료하고 다음 상태로 진행
+                        if (sampling_state != 2) begin
+                            received_data <= {received_data[38:0], 1'b0}; // 기본값 0
+                            bit_count <= bit_count + 1;
+                            delay_counter <= 0;
+                            bit_timeout_counter <= 0;
+                            sampling_state <= 0;
+                            state <= STOP;
+                            
+                            // 펄스 생성
+                            sensor_data <= 1;
+                            pulse_active <= 1;
+                            pulse_width_counter <= 0;
+                        end
                     end
                 end
                 
@@ -249,9 +333,31 @@ module dut_ctr(
                     dnt_io <= 0;
                     
                     if (ready_to_display) begin
-                        // 실제 센서 데이터 대신 시뮬레이션 데이터 사용
-                        // 온도: 25°C, 습도: 50%
-                        dnt_sensor_data <= (bit_count % 2 == 0) ? 8'd25 : 8'd50;
+                        // 충분한 비트를 수집했을 때 온습도 업데이트
+                        if (bit_count >= 32) begin
+                            // 실제 데이터 처리 (샘플)
+                            // DHT센서는 보통 첫 16비트는 습도, 다음 16비트는 온도
+                            humidity <= {received_data[39:32], received_data[31:24]} >> 8;  // 상위 8비트만 사용
+                            temperature <= {received_data[23:16], received_data[15:8]} >> 8;  // 상위 8비트만 사용
+                            
+                            // 데이터 준비 완료
+                            data_ready <= 1;
+                            
+                            // 기본적으로 온도 표시
+                            is_temp_display <= 1;
+                            dnt_sensor_data <= {received_data[23:16], received_data[15:8]} >> 8;
+                        end else if (bit_count > 0) begin
+                            // 데이터 수집이 충분하지 않을 경우 기존 값 유지하되 변화를 시뮬레이션
+                            // 이는 실제 데이터가 아니라 시뮬레이션용
+                            humidity <= humidity + 1;
+                            temperature <= temperature + 1;
+                            
+                            // 데이터 준비 표시
+                            data_ready <= 1;
+                            
+                            // 선택된 값 표시
+                            dnt_sensor_data <= is_temp_display ? temperature + 1 : humidity + 1;
+                        end
                     end
                     
                     if (delay_counter >= 50) begin
@@ -265,6 +371,274 @@ module dut_ctr(
         end
     end
 endmodule
+
+// module dut_ctr(
+//     input clk,
+//     input rst,
+//     input btn_start,
+//     input tick_counter,
+//     input btn_next,
+
+//     output reg sensor_data,
+//     output reg [3:0] current_state,
+//     output reg [7:0] dnt_data,
+//     output reg [7:0] dnt_sensor_data,
+//     output reg dnt_io,
+
+//     output reg idle,
+//     output reg start,
+//     output reg wait_state,
+//     output reg sync_low_out,
+//     output reg sync_high_out,
+//     output reg data_sync_out,
+//     output reg data_bit_out,
+//     output reg stop_out,
+//     output reg read
+// );
+//     // FSM 상태 정의
+//     localparam IDLE = 4'b0000;
+//     localparam START = 4'b0001;
+//     localparam WAIT = 4'b0010;
+//     localparam SYNC_LOW = 4'b0011;
+//     localparam SYNC_HIGH = 4'b0100;
+//     localparam DATA_SYNC = 4'b0101;
+//     localparam DATA_BIT = 4'b0110;
+//     localparam STOP = 4'b0111;
+//     localparam READ = 4'b1000;
+
+//     // 상태 변수
+//     reg [3:0] state;
+//     reg [3:0] prev_state;
+//     reg [5:0] bit_count;
+//     reg [39:0] received_data;
+
+//     // 버튼 엣지 감지
+//     reg [2:0] btn_sync;
+//     reg btn_edge;
+//     reg [2:0] next_btn_sync;
+//     reg next_btn_edge;
+
+//     // 타이머 변수
+//     reg tick_prev;
+//     reg [7:0] delay_counter;
+//     reg [7:0] bit_timeout_counter;
+//     reg [3:0] cooldown_counter;
+//     reg ready_to_display;
+    
+//     // 펄스 폭 확장을 위한 변수
+//     reg [19:0] pulse_width_counter;
+//     reg pulse_active;
+
+//     // 엣지 감지
+//     always @(posedge clk or posedge rst) begin
+//         if (rst) begin
+//             btn_sync <= 3'b000;
+//             btn_edge <= 1'b0;
+//             next_btn_sync <= 3'b000;
+//             next_btn_edge <= 1'b0;
+//             tick_prev <= 0;
+//             pulse_width_counter <= 0;
+//             pulse_active <= 0;
+//         end else begin
+//             btn_sync <= {btn_sync[1:0], btn_start};
+//             btn_edge <= (btn_sync[1] & ~btn_sync[2]);
+
+//             next_btn_sync <= {next_btn_sync[1:0], btn_next};
+//             next_btn_edge <= (next_btn_sync[1] & ~next_btn_sync[2]);
+
+//             tick_prev <= tick_counter;
+//         end
+//     end
+
+//     // FSM 로직
+//     always @(posedge clk or posedge rst) begin
+//         if (rst) begin
+//             state <= IDLE;
+//             prev_state <= IDLE;
+//             tick_prev <= 0;
+//             bit_count <= 0;
+//             received_data <= 0;
+//             dnt_data <= 0;
+//             dnt_io <= 1;
+//             current_state <= IDLE;
+//             sensor_data <= 0;
+//             dnt_sensor_data <= 0;
+//             delay_counter <= 0;
+//             bit_timeout_counter <= 0;
+//             cooldown_counter <= 0;
+//             ready_to_display <= 0;
+//             pulse_width_counter <= 0;
+//             pulse_active <= 0;
+
+//             // 출력 초기화
+//             idle <= 1;
+//             start <= 0;
+//             wait_state <= 0;
+//             sync_low_out <= 0;
+//             sync_high_out <= 0;
+//             data_sync_out <= 0;
+//             data_bit_out <= 0;
+//             stop_out <= 0;
+//             read <= 0;
+//         end else begin
+//             prev_state <= state;
+
+//             // 쿨다운 로직
+//             if (prev_state != state)
+//                 cooldown_counter <= 0;
+//             else if (cooldown_counter < 5)
+//                 cooldown_counter <= cooldown_counter + 1;
+
+//             ready_to_display <= (cooldown_counter >= 5);
+
+//             // 출력 초기화
+//             idle <= 0;
+//             start <= 0;
+//             wait_state <= 0;
+//             sync_low_out <= 0;
+//             sync_high_out <= 0;
+//             data_sync_out <= 0;
+//             data_bit_out <= 0;
+//             stop_out <= 0;
+//             read <= 0;
+
+//             // 딜레이 타이머
+//             if (tick_counter & ~tick_prev) begin
+//                 delay_counter <= delay_counter + 1;
+//                 bit_timeout_counter <= bit_timeout_counter + 1;
+//             end
+
+//             current_state <= state;
+
+//             // 펄스 폭 확장 로직
+//             if (pulse_active) begin
+//                 if (pulse_width_counter < 20'd50000) begin
+//                     // 펄스 유지 (약 0.5ms, 50,000 클럭 @ 100MHz)
+//                     pulse_width_counter <= pulse_width_counter + 1;
+//                     sensor_data <= 1;
+//                 end else begin
+//                     // 펄스 종료
+//                     pulse_active <= 0;
+//                     pulse_width_counter <= 0;
+//                     sensor_data <= 0;
+//                 end
+//             end
+//         // FSM 상태 전환 로직
+//             case (state)
+//                 IDLE: begin
+//                     idle <= 1;
+//                     dnt_io <= 1;
+                    
+//                     if (btn_edge) begin
+//                         state <= START;
+//                         delay_counter <= 0;
+//                         bit_count <= 0;
+//                         bit_timeout_counter <= 0;
+//                     end
+//                 end
+                
+//                 START: begin
+//                     start <= 1;
+//                     dnt_io <= 0;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= WAIT;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 WAIT: begin
+//                     wait_state <= 1;
+//                     dnt_io <= 1;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= SYNC_LOW;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 SYNC_LOW: begin
+//                     sync_low_out <= 1;
+//                     dnt_io <= 0;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= SYNC_HIGH;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 SYNC_HIGH: begin
+//                     sync_high_out <= 1;
+//                     dnt_io <= 1;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= DATA_SYNC;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 DATA_SYNC: begin
+//                     data_sync_out <= 1;
+//                     dnt_io <= 0;
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= DATA_BIT;
+//                         delay_counter <= 0;
+//                         bit_timeout_counter <= 0;
+//                     end
+//                 end
+                
+//                 DATA_BIT: begin
+//                     data_bit_out <= 1;
+//                     dnt_io <= 1;
+                    
+//                     if (next_btn_edge || bit_timeout_counter >= 30) begin
+//                         // 시뮬레이션을 위해 수신 데이터에 항상 1 추가
+//                         received_data <= {received_data[38:0], 1'b1};
+                        
+//                         // 수정된 부분: 데이터 수신 시 펄스 폭 확장 로직 추가
+//                         sensor_data <= 1;
+//                         pulse_active <= 1;
+//                         pulse_width_counter <= 0;
+                        
+//                         bit_count <= bit_count + 1;
+//                         delay_counter <= 0;
+//                         bit_timeout_counter <= 0;
+//                         state <= STOP;
+//                     end
+//                 end
+                
+//                 STOP: begin
+//                     stop_out <= 1;
+//                     dnt_io <= 1;
+                    
+//                     if (delay_counter >= 100) begin
+//                         state <= READ;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 READ: begin
+//                     read <= 1;
+//                     dnt_io <= 0;
+                    
+//                     if (ready_to_display) begin
+//                         // 실제 센서 데이터 대신 시뮬레이션 데이터 사용
+//                         // 온도: 25°C, 습도: 50%
+//                         dnt_sensor_data <= (bit_count % 2 == 0) ? 8'd25 : 8'd50;
+//                     end
+                    
+//                     if (delay_counter >= 50) begin
+//                         state <= IDLE;
+//                         delay_counter <= 0;
+//                     end
+//                 end
+                
+//                 default: state <= IDLE;
+//             endcase
+//         end
+//     end
+// endmodule
 
 
 

@@ -17,9 +17,11 @@ INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t
 INFO: [Device 21-403] Loading part xc7a35tcpg236-1
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 7512
+INFO: [Synth 8-7075] Helper process launched with PID 15208
+WARNING: [Synth 8-6901] identifier 'is_ultrasonic_mode' is used before its declaration [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:31]
+WARNING: [Synth 8-6901] identifier 'is_temp_humid_mode' is used before its declaration [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:32]
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1134.859 ; gain = 0.000
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 1133.695 ; gain = 0.000
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'top_stopwatch' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:1]
 INFO: [Synth 8-6157] synthesizing module 'btn_debounce' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dtn_1.v:1]
@@ -107,29 +109,42 @@ INFO: [Synth 8-6157] synthesizing module 'clk_div_100' [C:/Users/parkj/250325_Ua
 	Parameter FCOUNT bound to: 5000000 - type: integer 
 INFO: [Synth 8-6155] done synthesizing module 'clk_div_100' (13#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:114]
 INFO: [Synth 8-6155] done synthesizing module 'stopwatch_dp' (14#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:3]
-WARNING: [Synth 8-689] width (6) of port connection 'sec' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:151]
-WARNING: [Synth 8-689] width (6) of port connection 'min' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:152]
+WARNING: [Synth 8-689] width (6) of port connection 'sec' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:179]
+WARNING: [Synth 8-689] width (6) of port connection 'min' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:180]
 INFO: [Synth 8-6157] synthesizing module 'clock' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v:3]
 INFO: [Synth 8-6155] done synthesizing module 'clock' (15#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v:3]
-INFO: [Synth 8-6157] synthesizing module 'ultrasonic_distance_meter' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top_1.v:1]
+INFO: [Synth 8-6157] synthesizing module 'dist_calculator' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v:1]
+	Parameter IDLE bound to: 3'b000 
+	Parameter TRIGGER bound to: 3'b001 
+	Parameter WAIT_ECHO bound to: 3'b010 
+	Parameter COUNT_ECHO bound to: 3'b011 
+	Parameter COMPLETE bound to: 3'b100 
+INFO: [Synth 8-6155] done synthesizing module 'dist_calculator' (16#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v:1]
 INFO: [Synth 8-6157] synthesizing module 'tick_generator' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:389]
-INFO: [Synth 8-6155] done synthesizing module 'tick_generator' (16#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:389]
-INFO: [Synth 8-6157] synthesizing module 'led_controller' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/led_indi.v:1]
-INFO: [Synth 8-6155] done synthesizing module 'led_controller' (17#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/led_indi.v:1]
-INFO: [Synth 8-6157] synthesizing module 'cu' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu_1.v:1]
-	Parameter IDLE bound to: 2'b00 
-	Parameter TRIGGER bound to: 2'b01 
-	Parameter WAIT_ECHO bound to: 2'b10 
-	Parameter COUNT_ECHO bound to: 2'b11 
-	Parameter TRIGGER_TIMEOUT bound to: 2000 - type: integer 
-	Parameter WAIT_ECHO_TIMEOUT bound to: 250000 - type: integer 
-	Parameter COUNT_ECHO_TIMEOUT bound to: 250000 - type: integer 
-	Parameter IDLE_TIMEOUT_MS bound to: 100 - type: integer 
-INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu_1.v:75]
-INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu_1.v:190]
-INFO: [Synth 8-6155] done synthesizing module 'cu' (18#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu_1.v:1]
-INFO: [Synth 8-6157] synthesizing module 'dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp_1.v:2]
-INFO: [Synth 8-6155] done synthesizing module 'dp' (19#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp_1.v:2]
+INFO: [Synth 8-6155] done synthesizing module 'tick_generator' (17#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:389]
+INFO: [Synth 8-6157] synthesizing module 'dut_ctr' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:1]
+	Parameter IDLE bound to: 4'b0000 
+	Parameter START bound to: 4'b0001 
+	Parameter WAIT bound to: 4'b0010 
+	Parameter SYNC_LOW bound to: 4'b0011 
+	Parameter SYNC_HIGH bound to: 4'b0100 
+	Parameter DATA_SYNC bound to: 4'b0101 
+	Parameter DATA_BIT bound to: 4'b0110 
+	Parameter STOP bound to: 4'b0111 
+	Parameter READ bound to: 4'b1000 
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:259]
+INFO: [Synth 8-6155] done synthesizing module 'dut_ctr' (18#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:1]
+INFO: [Synth 8-6157] synthesizing module 'display_mux' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:1]
+	Parameter STATE_0 bound to: 3'b000 
+	Parameter STATE_1 bound to: 3'b001 
+	Parameter STATE_2 bound to: 3'b010 
+	Parameter STATE_3 bound to: 3'b011 
+	Parameter STATE_4 bound to: 3'b100 
+	Parameter STATE_5 bound to: 3'b101 
+	Parameter STATE_6 bound to: 3'b110 
+	Parameter STATE_7 bound to: 3'b111 
+INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:35]
+INFO: [Synth 8-6155] done synthesizing module 'display_mux' (19#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:1]
 INFO: [Synth 8-6157] synthesizing module 'fnd_controller' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:1]
 INFO: [Synth 8-6157] synthesizing module 'clk_divider' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:164]
 	Parameter FCOUNT bound to: 100000 - type: integer 
@@ -153,7 +168,192 @@ INFO: [Synth 8-6157] synthesizing module 'bcdtoseg' [C:/Users/parkj/250325_Uart_
 INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:323]
 INFO: [Synth 8-6155] done synthesizing module 'bcdtoseg' (24#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:318]
 INFO: [Synth 8-6155] done synthesizing module 'fnd_controller' (25#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:1]
-INFO: [Synth 8-6155] done synthesizing module 'ultrasonic_distance_meter' (26#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top_1.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'top_stopwatch' (26#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:1]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 1135.930 ; gain = 2.234
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1135.930 ; gain = 2.234
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 1135.930 ; gain = 2.234
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 1135.930 ; gain = 0.000
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [C:/verilog/Basys-3-Master.xdc]
+WARNING: [Vivado 12-584] No ports matched 'idle'. [C:/verilog/Basys-3-Master.xdc:50]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:50]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'start'. [C:/verilog/Basys-3-Master.xdc:51]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:51]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'read'. [C:/verilog/Basys-3-Master.xdc:52]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:52]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'dut_io'. [C:/verilog/Basys-3-Master.xdc:53]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:53]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'data_sync_out'. [C:/verilog/Basys-3-Master.xdc:54]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:54]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'data_bit_out'. [C:/verilog/Basys-3-Master.xdc:57]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:57]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'fsm_error'. [C:/verilog/Basys-3-Master.xdc:58]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:58]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'stop_out'. [C:/verilog/Basys-3-Master.xdc:59]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:59]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sync_low_out'. [C:/verilog/Basys-3-Master.xdc:60]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:60]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'sync_high_out'. [C:/verilog/Basys-3-Master.xdc:61]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:61]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+WARNING: [Vivado 12-584] No ports matched 'wait_state'. [C:/verilog/Basys-3-Master.xdc:62]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:62]
+Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
+Finished Parsing XDC File [C:/verilog/Basys-3-Master.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [C:/verilog/Basys-3-Master.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/top_stopwatch_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/top_stopwatch_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1252.531 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1252.531 ; gain = 0.000
+
+*** Running vivado
+    with args -log top_stopwatch.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source top_stopwatch.tcl
+
+
+
+****** Vivado v2020.2 (64-bit)
+  **** SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+  **** IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+    ** Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
+
+source top_stopwatch.tcl -notrace
+Command: synth_design -top top_stopwatch -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Device 21-403] Loading part xc7a35tcpg236-1
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 1872
+WARNING: [Synth 8-6901] identifier 'is_ultrasonic_mode' is used before its declaration [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:31]
+WARNING: [Synth 8-6901] identifier 'is_temp_humid_mode' is used before its declaration [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:32]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 1134.242 ; gain = 0.000
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'top_stopwatch' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:1]
+INFO: [Synth 8-6157] synthesizing module 'btn_debounce' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dtn_1.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'btn_debounce' (1#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dtn_1.v:1]
+INFO: [Synth 8-6157] synthesizing module 'uart_fifo_top' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:1]
+INFO: [Synth 8-6157] synthesizing module 'uart_cu' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.cu.v:1]
+	Parameter IDLE bound to: 2'b00 
+	Parameter READ_CMD bound to: 2'b01 
+	Parameter PROCESS_CMD bound to: 2'b10 
+	Parameter SEND_RESPONSE bound to: 2'b11 
+	Parameter CMD_RUN bound to: 8'b01010010 
+	Parameter CMD_RUN_LOWER bound to: 8'b01110010 
+	Parameter CMD_CLEAR bound to: 8'b01000011 
+	Parameter CMD_CLEAR_LOWER bound to: 8'b01100011 
+	Parameter CMD_HOUR bound to: 8'b01001000 
+	Parameter CMD_HOUR_LOWER bound to: 8'b01101000 
+	Parameter CMD_MIN bound to: 8'b01001101 
+	Parameter CMD_MIN_LOWER bound to: 8'b01101101 
+	Parameter CMD_SEC bound to: 8'b01010011 
+	Parameter CMD_SEC_LOWER bound to: 8'b01110011 
+	Parameter CMD_ULTRASONIC bound to: 8'b01010101 
+	Parameter CMD_ULTRASONIC_LOWER bound to: 8'b01110101 
+	Parameter CMD_TEMP_HUMID bound to: 8'b01010100 
+	Parameter CMD_TEMP_HUMID_LOWER bound to: 8'b01110100 
+INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.cu.v:202]
+INFO: [Synth 8-6155] done synthesizing module 'uart_cu' (2#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.cu.v:1]
+INFO: [Synth 8-6157] synthesizing module 'FIFO' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:3]
+INFO: [Synth 8-6157] synthesizing module 'register_file' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:41]
+INFO: [Synth 8-6155] done synthesizing module 'register_file' (3#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:41]
+INFO: [Synth 8-6157] synthesizing module 'FIFO_control_unit' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:68]
+INFO: [Synth 8-6155] done synthesizing module 'FIFO_control_unit' (4#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:68]
+INFO: [Synth 8-6155] done synthesizing module 'FIFO' (5#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v:3]
+INFO: [Synth 8-6157] synthesizing module 'uart_tx' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:450]
+	Parameter IDLE bound to: 3'b000 
+	Parameter START bound to: 3'b001 
+	Parameter DATA bound to: 3'b010 
+	Parameter STOP bound to: 3'b011 
+INFO: [Synth 8-6155] done synthesizing module 'uart_tx' (6#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:450]
+INFO: [Synth 8-6157] synthesizing module 'baud_tick_gen' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:778]
+	Parameter BAUD_RATE bound to: 9600 - type: integer 
+	Parameter BAUD_COUNT bound to: 651 - type: integer 
+	Parameter COUNTER_WIDTH bound to: 10 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'baud_tick_gen' (7#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:778]
+INFO: [Synth 8-6157] synthesizing module 'uart_rx' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:581]
+	Parameter IDLE bound to: 0 - type: integer 
+	Parameter START bound to: 1 - type: integer 
+	Parameter DATA bound to: 2 - type: integer 
+	Parameter STOP bound to: 3 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'uart_rx' (8#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:581]
+INFO: [Synth 8-6155] done synthesizing module 'uart_fifo_top' (9#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v:1]
+INFO: [Synth 8-6157] synthesizing module 'fsm_controller' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fsm.v:1]
+	Parameter STATE_0 bound to: 3'b000 
+	Parameter STATE_1 bound to: 3'b001 
+	Parameter STATE_2 bound to: 3'b010 
+	Parameter STATE_3 bound to: 3'b011 
+	Parameter STATE_4 bound to: 3'b100 
+	Parameter STATE_5 bound to: 3'b101 
+	Parameter STATE_6 bound to: 3'b110 
+	Parameter STATE_7 bound to: 3'b111 
+INFO: [Synth 8-6155] done synthesizing module 'fsm_controller' (10#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fsm.v:1]
+INFO: [Synth 8-6157] synthesizing module 'stopwatch_cu' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:6]
+	Parameter STOP bound to: 2'b00 
+	Parameter RUN bound to: 2'b01 
+	Parameter CLEAR bound to: 2'b10 
+WARNING: [Synth 8-6090] variable 'o_run' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:50]
+WARNING: [Synth 8-6090] variable 'o_clear' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:51]
+WARNING: [Synth 8-6090] variable 'o_run' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:54]
+WARNING: [Synth 8-6090] variable 'o_clear' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:55]
+WARNING: [Synth 8-6090] variable 'o_clear' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:59]
+WARNING: [Synth 8-6090] variable 'o_run' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:62]
+WARNING: [Synth 8-6090] variable 'o_clear' is written by both blocking and non-blocking assignments, entire logic could be removed [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:63]
+INFO: [Synth 8-6155] done synthesizing module 'stopwatch_cu' (11#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v:6]
+INFO: [Synth 8-6157] synthesizing module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:3]
+INFO: [Synth 8-6157] synthesizing module 'time_counter' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+	Parameter TICK_COUNT bound to: 100 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'time_counter' (12#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+INFO: [Synth 8-6157] synthesizing module 'time_counter__parameterized0' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+	Parameter TICK_COUNT bound to: 60 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'time_counter__parameterized0' (12#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+INFO: [Synth 8-6157] synthesizing module 'time_counter__parameterized1' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+	Parameter TICK_COUNT bound to: 24 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'time_counter__parameterized1' (12#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:73]
+WARNING: [Synth 8-689] width (5) of port connection 'o_time' does not match port width (7) of module 'time_counter__parameterized1' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:56]
+INFO: [Synth 8-6157] synthesizing module 'clk_div_100' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:114]
+	Parameter FCOUNT bound to: 5000000 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'clk_div_100' (13#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:114]
+INFO: [Synth 8-6155] done synthesizing module 'stopwatch_dp' (14#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v:3]
+WARNING: [Synth 8-689] width (6) of port connection 'sec' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:179]
+WARNING: [Synth 8-689] width (6) of port connection 'min' does not match port width (7) of module 'stopwatch_dp' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:180]
+INFO: [Synth 8-6157] synthesizing module 'clock' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'clock' (15#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v:3]
+INFO: [Synth 8-6157] synthesizing module 'dist_calculator' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v:1]
+	Parameter IDLE bound to: 3'b000 
+	Parameter TRIGGER bound to: 3'b001 
+	Parameter WAIT_ECHO bound to: 3'b010 
+	Parameter COUNT_ECHO bound to: 3'b011 
+	Parameter COMPLETE bound to: 3'b100 
+INFO: [Synth 8-6155] done synthesizing module 'dist_calculator' (16#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v:1]
+INFO: [Synth 8-6157] synthesizing module 'tick_generator' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:389]
+INFO: [Synth 8-6155] done synthesizing module 'tick_generator' (17#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:389]
 INFO: [Synth 8-6157] synthesizing module 'dut_ctr' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:1]
 	Parameter IDLE bound to: 4'b0000 
 	Parameter START bound to: 4'b0001 
@@ -164,7 +364,8 @@ INFO: [Synth 8-6157] synthesizing module 'dut_ctr' [C:/Users/parkj/250325_Uart_S
 	Parameter DATA_BIT bound to: 4'b0110 
 	Parameter STOP bound to: 4'b0111 
 	Parameter READ bound to: 4'b1000 
-INFO: [Synth 8-6155] done synthesizing module 'dut_ctr' (27#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:1]
+INFO: [Synth 8-155] case statement is not full and has no default [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:259]
+INFO: [Synth 8-6155] done synthesizing module 'dut_ctr' (18#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:1]
 INFO: [Synth 8-6157] synthesizing module 'display_mux' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:1]
 	Parameter STATE_0 bound to: 3'b000 
 	Parameter STATE_1 bound to: 3'b001 
@@ -175,32 +376,54 @@ INFO: [Synth 8-6157] synthesizing module 'display_mux' [C:/Users/parkj/250325_Ua
 	Parameter STATE_6 bound to: 3'b110 
 	Parameter STATE_7 bound to: 3'b111 
 INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:35]
-INFO: [Synth 8-6155] done synthesizing module 'display_mux' (28#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:1]
-WARNING: [Synth 8-689] width (8) of port connection 'msec' does not match port width (7) of module 'fnd_controller' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:239]
-INFO: [Synth 8-6155] done synthesizing module 'top_stopwatch' (29#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'display_mux' (19#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v:1]
+INFO: [Synth 8-6157] synthesizing module 'fnd_controller' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:1]
+INFO: [Synth 8-6157] synthesizing module 'clk_divider' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:164]
+	Parameter FCOUNT bound to: 100000 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'clk_divider' (20#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:164]
+INFO: [Synth 8-6157] synthesizing module 'counter_8' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:197]
+INFO: [Synth 8-6155] done synthesizing module 'counter_8' (21#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:197]
+INFO: [Synth 8-6157] synthesizing module 'decoder_3x8' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:218]
+INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:224]
+INFO: [Synth 8-6155] done synthesizing module 'decoder_3x8' (22#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:218]
+INFO: [Synth 8-6157] synthesizing module 'digit_splitter' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+	Parameter BIT_WIDTH bound to: 7 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'digit_splitter' (23#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+INFO: [Synth 8-6157] synthesizing module 'digit_splitter__parameterized0' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+	Parameter BIT_WIDTH bound to: 6 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'digit_splitter__parameterized0' (23#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+INFO: [Synth 8-6157] synthesizing module 'digit_splitter__parameterized1' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+	Parameter BIT_WIDTH bound to: 5 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'digit_splitter__parameterized1' (23#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:245]
+INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:97]
+INFO: [Synth 8-6157] synthesizing module 'bcdtoseg' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:318]
+INFO: [Synth 8-226] default block is never used [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:323]
+INFO: [Synth 8-6155] done synthesizing module 'bcdtoseg' (24#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:318]
+INFO: [Synth 8-6155] done synthesizing module 'fnd_controller' (25#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'top_stopwatch' (26#1) [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v:1]
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 1134.859 ; gain = 0.000
+Finished RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1135.570 ; gain = 1.328
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1134.859 ; gain = 0.000
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1135.570 ; gain = 1.328
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1134.859 ; gain = 0.000
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 1135.570 ; gain = 1.328
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.011 . Memory (MB): peak = 1134.859 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.012 . Memory (MB): peak = 1135.570 ; gain = 0.000
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
 Parsing XDC File [C:/verilog/Basys-3-Master.xdc]
-WARNING: [Vivado 12-584] No ports matched 'btn_sec'. [C:/verilog/Basys-3-Master.xdc:43]
-CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:43]
+WARNING: [Vivado 12-584] No ports matched 'ultrasonic_mode_btn'. [C:/verilog/Basys-3-Master.xdc:44]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:44]
 Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
-WARNING: [Vivado 12-584] No ports matched 'btn_min'. [C:/verilog/Basys-3-Master.xdc:47]
-CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:47]
+WARNING: [Vivado 12-584] No ports matched 'temp_humid_mode_btn'. [C:/verilog/Basys-3-Master.xdc:45]
+CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:45]
 Resolution: If [get_<value>] was used to populate the object, check to make sure this command returns at least one valid object.
 WARNING: [Vivado 12-584] No ports matched 'idle'. [C:/verilog/Basys-3-Master.xdc:50]
 CRITICAL WARNING: [Common 17-55] 'set_property' expects at least one object. [C:/verilog/Basys-3-Master.xdc:50]
@@ -240,31 +463,30 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/top_stopwatch_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1252.301 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1252.621 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 1252.301 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 1252.621 ; gain = 0.000
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcpg236-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'uart_tx'
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'uart_rx'
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'stopwatch_cu'
-INFO: [Synth 8-802] inferred FSM for state register 'current_state_reg' in module 'cu'
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'dut_ctr'
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
@@ -295,15 +517,6 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
-                    IDLE |                               00 |                               00
-                 TRIGGER |                               01 |                               01
-               WAIT_ECHO |                               10 |                               10
-              COUNT_ECHO |                               11 |                               11
----------------------------------------------------------------------------------------------------
-INFO: [Synth 8-3354] encoded FSM with state register 'current_state_reg' using encoding 'sequential' in module 'cu'
----------------------------------------------------------------------------------------------------
-                   State |                     New Encoding |                Previous Encoding 
----------------------------------------------------------------------------------------------------
                     IDLE |                             0000 |                             0000
                    START |                             0001 |                             0001
                     WAIT |                             0010 |                             0010
@@ -316,80 +529,85 @@ INFO: [Synth 8-3354] encoded FSM with state register 'current_state_reg' using e
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'dut_ctr'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
 ---------------------------------------------------------------------------------
 Detailed RTL Component Info : 
 +---Adders : 
-	   2 Input   32 Bit       Adders := 2     
-	   2 Input   25 Bit       Adders := 3     
+	   2 Input   32 Bit       Adders := 3     
+	   2 Input   25 Bit       Adders := 1     
 	   2 Input   23 Bit       Adders := 1     
 	   2 Input   20 Bit       Adders := 1     
-	   2 Input   17 Bit       Adders := 2     
+	   2 Input   17 Bit       Adders := 1     
 	   2 Input   16 Bit       Adders := 1     
 	   2 Input   10 Bit       Adders := 1     
-	   2 Input    8 Bit       Adders := 8     
-	   2 Input    7 Bit       Adders := 2     
+	   2 Input    8 Bit       Adders := 9     
+	   2 Input    7 Bit       Adders := 3     
 	   2 Input    6 Bit       Adders := 5     
 	   2 Input    5 Bit       Adders := 3     
 	   2 Input    4 Bit       Adders := 9     
-	   2 Input    3 Bit       Adders := 5     
+	   2 Input    3 Bit       Adders := 4     
 +---Registers : 
-	               32 Bit    Registers := 2     
-	               25 Bit    Registers := 3     
+	               40 Bit    Registers := 1     
+	               32 Bit    Registers := 4     
+	               25 Bit    Registers := 1     
 	               23 Bit    Registers := 1     
-	               17 Bit    Registers := 2     
+	               17 Bit    Registers := 1     
 	               16 Bit    Registers := 1     
 	               10 Bit    Registers := 1     
-	                8 Bit    Registers := 13    
-	                7 Bit    Registers := 3     
+	                8 Bit    Registers := 15    
+	                7 Bit    Registers := 4     
 	                6 Bit    Registers := 5     
 	                5 Bit    Registers := 3     
 	                4 Bit    Registers := 8     
 	                3 Bit    Registers := 7     
 	                2 Bit    Registers := 4     
-	                1 Bit    Registers := 78    
+	                1 Bit    Registers := 71    
++---Multipliers : 
+	               7x32  Multipliers := 1     
 +---Muxes : 
-	   4 Input   32 Bit        Muxes := 1     
-	   2 Input   32 Bit        Muxes := 1     
-	   2 Input   25 Bit        Muxes := 2     
+	   2 Input   40 Bit        Muxes := 2     
+	   6 Input   32 Bit        Muxes := 3     
 	   2 Input   23 Bit        Muxes := 2     
-	   2 Input   20 Bit        Muxes := 1     
+	   2 Input   20 Bit        Muxes := 2     
+	   4 Input   20 Bit        Muxes := 1     
 	   9 Input   20 Bit        Muxes := 1     
-	   2 Input   17 Bit        Muxes := 2     
+	   2 Input   17 Bit        Muxes := 1     
 	   2 Input   16 Bit        Muxes := 1     
 	   2 Input   10 Bit        Muxes := 1     
-	   2 Input    8 Bit        Muxes := 16    
-	   4 Input    8 Bit        Muxes := 1     
-	   9 Input    8 Bit        Muxes := 2     
+	   2 Input    8 Bit        Muxes := 24    
+	   4 Input    8 Bit        Muxes := 4     
+	   9 Input    8 Bit        Muxes := 4     
 	   2 Input    7 Bit        Muxes := 5     
 	   5 Input    7 Bit        Muxes := 1     
-	   2 Input    6 Bit        Muxes := 9     
+	   2 Input    6 Bit        Muxes := 8     
 	   9 Input    6 Bit        Muxes := 1     
 	   6 Input    6 Bit        Muxes := 2     
 	   2 Input    5 Bit        Muxes := 6     
 	   4 Input    5 Bit        Muxes := 1     
 	   6 Input    5 Bit        Muxes := 1     
-	   2 Input    4 Bit        Muxes := 7     
-	   4 Input    4 Bit        Muxes := 8     
-	   8 Input    4 Bit        Muxes := 2     
+	   2 Input    4 Bit        Muxes := 4     
+	   4 Input    4 Bit        Muxes := 4     
+	   6 Input    4 Bit        Muxes := 1     
 	   9 Input    4 Bit        Muxes := 2     
+	   8 Input    4 Bit        Muxes := 1     
 	   4 Input    3 Bit        Muxes := 2     
-	   2 Input    3 Bit        Muxes := 15    
-	   3 Input    3 Bit        Muxes := 3     
+	   2 Input    3 Bit        Muxes := 16    
+	   3 Input    3 Bit        Muxes := 5     
 	   5 Input    2 Bit        Muxes := 1     
-	   2 Input    2 Bit        Muxes := 18    
+	   2 Input    2 Bit        Muxes := 15    
 	   4 Input    2 Bit        Muxes := 3     
-	   2 Input    1 Bit        Muxes := 78    
-	   4 Input    1 Bit        Muxes := 48    
+	   9 Input    2 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 87    
+	   4 Input    1 Bit        Muxes := 49    
 	   7 Input    1 Bit        Muxes := 3     
 	   8 Input    1 Bit        Muxes := 1     
 	   3 Input    1 Bit        Muxes := 6     
 	   5 Input    1 Bit        Muxes := 1     
-	   6 Input    1 Bit        Muxes := 2     
-	   9 Input    1 Bit        Muxes := 21    
+	   6 Input    1 Bit        Muxes := 10    
+	   9 Input    1 Bit        Muxes := 30    
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -405,11 +623,11 @@ Finished Part Resource Summary
 ---------------------------------------------------------------------------------
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
-CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 1st driver pin 'U_DUT_CTR/tick_prev_reg/Q' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:84]
-CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 2nd driver pin 'GND' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:84]
-CRITICAL WARNING: [Synth 8-6858] multi-driven net Q is connected to at least one constant driver which has been preserved, other driver is ignored [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:84]
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 1st driver pin 'U_DUT_CTR/tick_prev_reg/Q' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:95]
+CRITICAL WARNING: [Synth 8-6859] multi-driven net on pin Q with 2nd driver pin 'GND' [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:95]
+CRITICAL WARNING: [Synth 8-6858] multi-driven net Q is connected to at least one constant driver which has been preserved, other driver is ignored [C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v:95]
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -431,13 +649,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:15 ; elapsed = 00:00:16 . Memory (MB): peak = 1252.301 ; gain = 117.441
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1252.621 ; gain = 118.379
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:15 ; elapsed = 00:00:16 . Memory (MB): peak = 1263.730 ; gain = 128.871
+Finished Timing Optimization : Time (s): cpu = 00:00:18 ; elapsed = 00:00:19 . Memory (MB): peak = 1278.348 ; gain = 144.105
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -458,7 +676,7 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:16 ; elapsed = 00:00:17 . Memory (MB): peak = 1270.980 ; gain = 136.121
+Finished Technology Mapping : Time (s): cpu = 00:00:18 ; elapsed = 00:00:19 . Memory (MB): peak = 1300.289 ; gain = 166.047
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -476,37 +694,52 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished IO Insertion : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++--------------+---------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name   | RTL Name                        | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++--------------+---------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|top_stopwatch | U_DUT_CTR/received_data_reg[32] | 9      | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|top_stopwatch | U_DUT_CTR/received_data_reg[16] | 17     | 1     | YES          | NO                 | YES               | 1      | 0       | 
++--------------+---------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -523,41 +756,44 @@ Report Cell Usage:
 |      |Cell   |Count |
 +------+-------+------+
 |1     |BUFG   |     1|
-|2     |CARRY4 |    73|
-|3     |LUT1   |     7|
-|4     |LUT2   |   210|
-|5     |LUT3   |   153|
-|6     |LUT4   |   138|
-|7     |LUT5   |   142|
-|8     |LUT6   |   198|
+|2     |CARRY4 |   213|
+|3     |LUT1   |    39|
+|4     |LUT2   |   379|
+|5     |LUT3   |   431|
+|6     |LUT4   |   280|
+|7     |LUT5   |   290|
+|8     |LUT6   |   472|
 |9     |RAM32M |     4|
-|10    |FDCE   |   558|
-|11    |FDPE   |     5|
-|12    |IBUF   |    10|
-|13    |OBUF   |    23|
+|10    |SRL16E |     2|
+|11    |FDCE   |   666|
+|12    |FDPE   |    13|
+|13    |FDRE   |     2|
+|14    |IBUF   |    10|
+|15    |OBUF   |    23|
+|16    |OBUFT  |     1|
 +------+-------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 3 critical warnings and 0 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:13 ; elapsed = 00:00:17 . Memory (MB): peak = 1286.781 ; gain = 34.480
-Synthesis Optimization Complete : Time (s): cpu = 00:00:17 ; elapsed = 00:00:18 . Memory (MB): peak = 1286.781 ; gain = 151.922
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:16 ; elapsed = 00:00:20 . Memory (MB): peak = 1314.141 ; gain = 62.848
+Synthesis Optimization Complete : Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1314.141 ; gain = 179.898
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 1298.844 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 77 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.015 . Memory (MB): peak = 1326.148 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 217 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 1298.844 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 1326.148 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 4 instances were transformed.
   RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 4 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-98 Infos, 24 Warnings, 16 Critical Warnings and 0 Errors encountered.
+89 Infos, 25 Warnings, 16 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:21 ; elapsed = 00:00:23 . Memory (MB): peak = 1298.844 ; gain = 163.984
+synth_design: Time (s): cpu = 00:00:24 ; elapsed = 00:00:26 . Memory (MB): peak = 1326.148 ; gain = 191.906
 INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
 INFO: [Common 17-1381] The checkpoint 'C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.runs/synth_1/top_stopwatch.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file top_stopwatch_utilization_synth.rpt -pb top_stopwatch_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Thu Mar 27 19:45:19 2025...
+INFO: [Common 17-206] Exiting Vivado at Fri Mar 28 02:24:15 2025...

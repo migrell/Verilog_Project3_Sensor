@@ -70,7 +70,9 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param synth.incrementalSynthesisCache C:/Users/parkj/250325_Uart_Sensor-1/project_3/.Xil/Vivado-12568-parkjiho/incrSyn
+set_param chipscope.maxJobs 3
+set_param synth.incrementalSynthesisCache C:/Users/parkj/AppData/Roaming/Xilinx/Vivado/.Xil/Vivado-15140-parkjiho/incrSyn
+set_param xicom.use_bs_reader 1
 set_msg_config -id {Synth 8-256} -limit 10000
 set_msg_config -id {Synth 8-638} -limit 10000
 OPTRACE "Creating in-memory project" START { }
@@ -92,17 +94,14 @@ OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu_1.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v
+  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp_1.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dtn_1.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fsm.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/led_indi.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top_1.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.cu.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v
   C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v
