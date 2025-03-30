@@ -32,7 +32,7 @@ module uart_fifo_top (
     wire       w_tx_done;  // TX 완료 신호
 
     // 테스트벤치용 추가 신호
-    reg        btn_start = 1'b1;  // 시작 버튼 신호, 항상 활성화
+    reg        btn_run = 1'b1;  // 시작 버튼 신호, 항상 활성화
     wire [7:0] rdata;  // 데이터 읽기 값
     wire       rd;  // 읽기 신호
 
@@ -125,16 +125,6 @@ module uart_fifo_top (
         .o_tick_count()  // 연결은 하되 사용하지 않음
     );
 
-    // // UART TX 모듈
-    // uart_tx U_uart_tx (
-    //     .clk(clk),
-    //     .rst(rst),
-    //     .tick(w_tick),
-    //     .start_trigger(tx_start),
-    //     .data_in(tx_fifo_rdata),
-    //     .o_tx_done(w_tx_done),
-    //     .o_tx(tx)
-    // );
 
     // 보드레이트 생성기
     baud_tick_gen U_tick_gen (
@@ -578,136 +568,136 @@ endmodule
 //     end
 // endmodule
 
-module uart_tx (
-    input clk,
-    input rst,
-    input tick,
-    input start_trigger,
-    input [7:0] data_in,
-    output reg o_tx_done,
-    output reg o_tx,
-    // 디버깅용 출력 - 제거하지 말고 그대로 유지 (포트 개수 일치를 위해)
-    output reg [2:0] o_state,
-    output reg [2:0] o_bit_count,
-    output reg [3:0] o_tick_count
-);
+// module uart_tx (
+//     input clk,
+//     input rst,
+//     input tick,
+//     input start_trigger,
+//     input [7:0] data_in,
+//     output reg o_tx_done,
+//     output reg o_tx,
+//     // 디버깅용 출력 - 제거하지 말고 그대로 유지 (포트 개수 일치를 위해)
+//     output reg [2:0] o_state,
+//     output reg [2:0] o_bit_count,
+//     output reg [3:0] o_tick_count
+// );
 
-    // 상태 정의 - SEND 제거 및 단순화
-    localparam IDLE = 3'h0, START = 3'h1, DATA = 3'h2, STOP = 3'h3;
+//     // 상태 정의 - SEND 제거 및 단순화
+//     localparam IDLE = 3'h0, START = 3'h1, DATA = 3'h2, STOP = 3'h3;
 
-    reg [2:0] state, next;
-    reg tx_next;
-    reg [2:0] bit_count, bit_count_next;
-    reg [3:0] tick_count_reg, tick_count_next;
-    reg [7:0] temp_data_reg, temp_data_next;
-    reg tx_done_next;
+//     reg [2:0] state, next;
+//     reg tx_next;
+//     reg [2:0] bit_count, bit_count_next;
+//     reg [3:0] tick_count_reg, tick_count_next;
+//     reg [7:0] temp_data_reg, temp_data_next;
+//     reg tx_done_next;
 
-    // 순차 로직 - 상태 및 레지스터 업데이트
-    always @(posedge clk or posedge rst) begin
-        if (rst) begin
-            state          <= IDLE;
-            o_tx           <= 1'b1;  // 리셋시 TX는 항상 High
-            o_tx_done      <= 1'b0;
-            bit_count      <= 3'b000;
-            tick_count_reg <= 4'b0000;
-            temp_data_reg  <= 8'h00;
-            // 디버깅용 출력 초기화
-            o_state        <= IDLE;
-            o_bit_count    <= 3'b000;
-            o_tick_count   <= 4'b0000;
-        end else begin
-            state <= next;
-            o_tx <= tx_next;      // tx_next가 o_tx로 제대로 업데이트되는지 확인
-            o_tx_done <= tx_done_next;
-            bit_count <= bit_count_next;
-            tick_count_reg <= tick_count_next;
-            temp_data_reg <= temp_data_next;
-            // 디버깅용 출력 업데이트
-            o_state <= next;
-            o_bit_count <= bit_count_next;
-            o_tick_count <= tick_count_next;
-        end
-    end
+//     // 순차 로직 - 상태 및 레지스터 업데이트
+//     always @(posedge clk or posedge rst) begin
+//         if (rst) begin
+//             state          <= IDLE;
+//             o_tx           <= 1'b1;  // 리셋시 TX는 항상 High
+//             o_tx_done      <= 1'b0;
+//             bit_count      <= 3'b000;
+//             tick_count_reg <= 4'b0000;
+//             temp_data_reg  <= 8'h00;
+//             // 디버깅용 출력 초기화
+//             o_state        <= IDLE;
+//             o_bit_count    <= 3'b000;
+//             o_tick_count   <= 4'b0000;
+//         end else begin
+//             state <= next;
+//             o_tx <= tx_next;      // tx_next가 o_tx로 제대로 업데이트되는지 확인
+//             o_tx_done <= tx_done_next;
+//             bit_count <= bit_count_next;
+//             tick_count_reg <= tick_count_next;
+//             temp_data_reg <= temp_data_next;
+//             // 디버깅용 출력 업데이트
+//             o_state <= next;
+//             o_bit_count <= bit_count_next;
+//             o_tick_count <= tick_count_next;
+//         end
+//     end
 
-    // 조합 로직 - 다음 상태 및 출력 결정
-    always @(*) begin
-        // 기본값 설정 - 엣지 케이스 방지
-        next = state;
-        tx_next = o_tx;  // 중요: 기본값으로 현재 값 유지
-        tx_done_next = o_tx_done;
-        tick_count_next = tick_count_reg;
-        bit_count_next = bit_count;
-        temp_data_next = temp_data_reg;
+//     // 조합 로직 - 다음 상태 및 출력 결정
+//     always @(*) begin
+//         // 기본값 설정 - 엣지 케이스 방지
+//         next = state;
+//         tx_next = o_tx;  // 중요: 기본값으로 현재 값 유지
+//         tx_done_next = o_tx_done;
+//         tick_count_next = tick_count_reg;
+//         bit_count_next = bit_count;
+//         temp_data_next = temp_data_reg;
 
-        case (state)
-            IDLE: begin
-                tx_next         = 1'b1;  // 명시적으로 1 할당
-                tx_done_next    = 1'b0;
-                tick_count_next = 4'b0000;
-                bit_count_next  = 3'b000;
+//         case (state)
+//             IDLE: begin
+//                 tx_next         = 1'b1;  // 명시적으로 1 할당
+//                 tx_done_next    = 1'b0;
+//                 tick_count_next = 4'b0000;
+//                 bit_count_next  = 3'b000;
 
-                if (start_trigger) begin
-                    next = START;
-                    temp_data_next = data_in;
-                end
-            end
+//                 if (start_trigger) begin
+//                     next = START;
+//                     temp_data_next = data_in;
+//                 end
+//             end
 
-            START: begin
-                tx_next = 1'b0;  // 시작 비트는 반드시 0
+//             START: begin
+//                 tx_next = 1'b0;  // 시작 비트는 반드시 0
 
-                if (tick) begin
-                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
-                        next = DATA;
-                        tick_count_next = 4'b0000;
-                    end else begin
-                        tick_count_next = tick_count_reg + 4'b0001;
-                    end
-                end
-            end
+//                 if (tick) begin
+//                     if (tick_count_reg == 4'b1111) begin  // 15에 도달
+//                         next = DATA;
+//                         tick_count_next = 4'b0000;
+//                     end else begin
+//                         tick_count_next = tick_count_reg + 4'b0001;
+//                     end
+//                 end
+//             end
 
-            DATA: begin
-                // 가장 중요한 부분: 데이터 비트를 tx_next에 할당
-                tx_next = temp_data_reg[bit_count];
+//             DATA: begin
+//                 // 가장 중요한 부분: 데이터 비트를 tx_next에 할당
+//                 tx_next = temp_data_reg[bit_count];
 
-                if (tick) begin
-                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
-                        tick_count_next = 4'b0000;
+//                 if (tick) begin
+//                     if (tick_count_reg == 4'b1111) begin  // 15에 도달
+//                         tick_count_next = 4'b0000;
 
-                        if (bit_count == 3'b111) begin  // 비트 7에 도달 (8비트 모두 전송)
-                            next = STOP;
-                        end else begin
-                            bit_count_next = bit_count + 3'b001;
-                        end
-                    end else begin
-                        tick_count_next = tick_count_reg + 4'b0001;
-                    end
-                end
-            end
+//                         if (bit_count == 3'b111) begin  // 비트 7에 도달 (8비트 모두 전송)
+//                             next = STOP;
+//                         end else begin
+//                             bit_count_next = bit_count + 3'b001;
+//                         end
+//                     end else begin
+//                         tick_count_next = tick_count_reg + 4'b0001;
+//                     end
+//                 end
+//             end
 
-            STOP: begin
-                tx_next = 1'b1;  // 정지 비트는 반드시 1
+//             STOP: begin
+//                 tx_next = 1'b1;  // 정지 비트는 반드시 1
 
-                if (tick) begin
-                    if (tick_count_reg == 4'b1111) begin  // 15에 도달
-                        next = IDLE;
-                        tx_done_next = 1'b1;  // 전송 완료
-                        tick_count_next = 4'b0000;
-                    end else begin
-                        tick_count_next = tick_count_reg + 4'b0001;
-                    end
-                end
-            end
+//                 if (tick) begin
+//                     if (tick_count_reg == 4'b1111) begin  // 15에 도달
+//                         next = IDLE;
+//                         tx_done_next = 1'b1;  // 전송 완료
+//                         tick_count_next = 4'b0000;
+//                     end else begin
+//                         tick_count_next = tick_count_reg + 4'b0001;
+//                     end
+//                 end
+//             end
 
-            default: begin
-                next = IDLE;
-                tx_next = 1'b1;
-                tx_done_next = 1'b0;
-                tick_count_next = 4'b0000;
-                bit_count_next = 3'b000;
-            end
-        endcase
-    end
-endmodule
+//             default: begin
+//                 next = IDLE;
+//                 tx_next = 1'b1;
+//                 tx_done_next = 1'b0;
+//                 tick_count_next = 4'b0000;
+//                 bit_count_next = 3'b000;
+//             end
+//         endcase
+//     end
+// endmodule
 
 module uart_rx (
     input clk,
@@ -806,45 +796,45 @@ module uart_rx (
     end
 endmodule
 
-//원래코드 
-// `timescale 1ns / 1ps
+// //원래코드 
+// // `timescale 1ns / 1ps
 
-// module uart_rx (
-//     input clk,rst,tick,rx,
-//     output rx_done,
-//     output [7:0] rx_data
-// );
+// // module uart_rx (
+// //     input clk,rst,tick,rx,
+// //     output rx_done,
+// //     output [7:0] rx_data
+// // );
 
-//     localparam IDLE = 0, START = 1, DATA = 2, STOP = 3 ;
-//     reg [1:0] state,next;
-//     reg rx_reg, rx_next;
-//     reg rx_done_reg, rx_done_next;
-//     reg [2:0] bit_count_reg, bit_count_next;
-//     reg [4:0] tick_count_reg, tick_count_next;
-//     reg [7:0] rx_data_reg, rx_data_next;
+// //     localparam IDLE = 0, START = 1, DATA = 2, STOP = 3 ;
+// //     reg [1:0] state,next;
+// //     reg rx_reg, rx_next;
+// //     reg rx_done_reg, rx_done_next;
+// //     reg [2:0] bit_count_reg, bit_count_next;
+// //     reg [4:0] tick_count_reg, tick_count_next;
+// //     reg [7:0] rx_data_reg, rx_data_next;
 
-//     //output
-//     assign rx_done = rx_done_reg;
-//     assign rx_data = rx_data_reg;
+// //     //output
+// //     assign rx_done = rx_done_reg;
+// //     assign rx_data = rx_data_reg;
 
-//     //state
-//     always @(posedge clk or posedge rst) begin
-//         if (rst) begin
-//             state <= 0;
-//             rx_done_reg <=0;
-//             rx_data_reg <=0;
-//             bit_count_reg <=0;
-//             tick_count_reg <=0;
-//         end else begin
-//             state <= next;
-//             rx_done_reg <= rx_done_next;
-//             rx_data_reg <= rx_data_next;
-//             bit_count_reg <=bit_count_next;
-//             tick_count_reg <= tick_count_next;
-//         end
-//     end
+// //     //state
+// //     always @(posedge clk or posedge rst) begin
+// //         if (rst) begin
+// //             state <= 0;
+// //             rx_done_reg <=0;
+// //             rx_data_reg <=0;
+// //             bit_count_reg <=0;
+// //             tick_count_reg <=0;
+// //         end else begin
+// //             state <= next;
+// //             rx_done_reg <= rx_done_next;
+// //             rx_data_reg <= rx_data_next;
+// //             bit_count_reg <=bit_count_next;
+// //             tick_count_reg <= tick_count_next;
+// //         end
+// //     end
 
-//     //next
+// //     //next
 //     always @(*) begin
 //         next = state;
 //         tick_count_next = tick_count_reg;

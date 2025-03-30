@@ -1,0 +1,38 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:45 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Sun Mar 30 11:05:55 2025
+# Process ID: 7360
+# Current directory: C:/Users/parkj/Desktop/TESTTEST_2/250325_Uart_Sensor/project_3
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent23460 C:\Users\parkj\Desktop\TESTTEST_2\250325_Uart_Sensor\project_3\project_3.xpr
+# Log file: C:/Users/parkj/Desktop/TESTTEST_2/250325_Uart_Sensor/project_3/vivado.log
+# Journal file: C:/Users/parkj/Desktop/TESTTEST_2/250325_Uart_Sensor/project_3\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project C:/Users/parkj/Desktop/TESTTEST_2/250325_Uart_Sensor/project_3/project_3.xpr
+INFO: [Project 1-313] Project file moved from 'C:/Users/parkj/Desktop/TESTTEST/250325_Uart_Sensor/project_3' since last save.
+WARNING: [filemgmt 56-3] Board Part Repository Path: Could not find the directory 'C:/Users/parkj/Desktop/AppData/Roaming/Xilinx/Vivado/2020.2/xhub/board_store/xilinx_board_store'.
+WARNING: [filemgmt 56-2] Default IP Output Path : Could not find the directory 'C:/Users/parkj/Desktop/TESTTEST_2/250325_Uart_Sensor/project_3/project_3.gen/sources_1', nor could it be found using path 'C:/Users/parkj/Desktop/TESTTEST/250325_Uart_Sensor/project_3/project_3.gen/sources_1'.
+Scanning sources...
+Finished scanning sources
+CRITICAL WARNING: [Board 49-67] The board_part definition was not found for digilentinc.com:basys3:part0:1.1. This can happen sometimes when you use custom board part. You can resolve this issue by setting 'board.repoPaths' parameter, pointing to the location of custom board files. Valid board_part values can be retrieved with the 'get_board_parts' Tcl command.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/migtell/Vivado/2020.2/data/ip'.
+update_compile_order -fileset sources_1
+xhub::uninstall [xhub::get_xitems digilentinc.com:xilinx_board_store:basys3:1.1]
+INFO: [xhubtcl 76-35] Un-installing object 'digilentinc.com:xilinx_board_store:basys3:1.1' ...
+INFO: [Common 17-1574] Object digilentinc.com:xilinx_board_store:basys3:1.1 has been un-installed successfully.
+set_param board.repoPaths {C:/Users/parkj/AppData/Roaming/Xilinx/Vivado/2020.2/xhub/board_store/xilinx_board_store}
+xhub::install [xhub::get_xitems digilentinc.com:xilinx_board_store:basys3:1.1]
+INFO: [xhubtcl 76-32] Installing object 'digilentinc.com:xilinx_board_store:basys3:1.1' ...
+INFO: [Common 17-1570] Installing object digilentinc.com:xilinx_board_store:basys3:1.1 from remote host https://github.com/Xilinx/XilinxBoardStore.git
+INFO: [Common 17-1573] Object digilentinc.com:xilinx_board_store:basys3:1.1 has been installed successfully.
+close_project
+create_project project_4 C:/250316_plz/project_4 -part xc7vx485tffg1157-1
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/migtell/Vivado/2020.2/data/ip'.
+exit
+INFO: [Common 17-206] Exiting Vivado at Sun Mar 30 11:07:29 2025...

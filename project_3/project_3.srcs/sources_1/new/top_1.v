@@ -2,7 +2,7 @@ module ultrasonic_distance_meter(
     input clk,           // 시스템 클럭 (100MHz)
     input reset,         // 리셋 신호
     input echo,          // 초음파 센서 에코 핀
-    input btn_start,     // 시작 버튼
+    input btn_run,     // 시작 버튼
     output trigger,      // 초음파 센서 트리거 핀
     output [3:0] fnd_comm,  // FND 공통단자 선택 신호
     output [7:0] fnd_font,  // FND 세그먼트 신호 (7세그먼트 + 도트)
@@ -29,7 +29,7 @@ module ultrasonic_distance_meter(
     btn_debounce U_btn_debounce(
         .clk(clk),
         .reset(reset),
-        .i_btn(btn_start),
+        .i_btn(btn_run),
         .rx_done(1'b0),        // UART 기능 미사용 시 0으로 설정
         .rx_data(8'h00),       // UART 기능 미사용 시 0으로 설정
         .btn_type(3'd0),       // RUN 버튼 타입(0) 선택
@@ -49,7 +49,7 @@ module ultrasonic_distance_meter(
     cu U_cu(
         .clk(clk),
         .reset(reset),
-        .btn_start(w_btn_debounced),  // 디바운스된 버튼 신호 사용
+        .btn_run(w_btn_debounced),  // 디바운스된 버튼 신호 사용
         .echo(echo),
         .dp_done(w_dp_done),
         .tick_10msec(w_tick_10msec),

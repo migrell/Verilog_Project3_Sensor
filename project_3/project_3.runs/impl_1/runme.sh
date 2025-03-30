@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.runs/impl_1'
+HD_PWD='C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
@@ -41,7 +41,7 @@ EAStep()
 }
 
 # pre-commands:
-/bin/touch .init_design.begin.rst
+/bin/touch .write_bitstream.begin.rst
 EAStep vivado -log top_stopwatch.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source top_stopwatch.tcl -notrace
 
 

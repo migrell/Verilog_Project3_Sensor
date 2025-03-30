@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.runs/synth_1/top_stopwatch.tcl"
+  variable script "C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.runs/synth_1/top_stopwatch.tcl"
   variable category "vivado_synth"
 }
 
@@ -71,7 +71,7 @@ proc create_report { reportName command } {
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
 set_param chipscope.maxJobs 3
-set_param synth.incrementalSynthesisCache C:/Users/parkj/250325_Uart_Sensor-1/project_3/.Xil/Vivado-20884-parkjiho/incrSyn
+set_param synth.incrementalSynthesisCache C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/.Xil/Vivado-8920-parkjiho/incrSyn
 set_param xicom.use_bs_reader 1
 set_msg_config -id {Synth 8-256} -limit 10000
 set_msg_config -id {Synth 8-638} -limit 10000
@@ -81,30 +81,31 @@ create_project -in_memory -part xc7a35tcpg236-1
 set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
-set_property webtalk.parent_dir C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.cache/wt [current_project]
-set_property parent.project_path C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.xpr [current_project]
+set_property webtalk.parent_dir C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.cache/wt [current_project]
+set_property parent.project_path C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.xpr [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property board_part_repo_paths {C:/Users/parkj/AppData/Roaming/Xilinx/Vivado/2020.2/xhub/board_store/xilinx_board_store} [current_project]
 set_property board_part digilentinc.com:basys3:part0:1.1 [current_project]
-set_property ip_output_repo c:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.cache/ip [current_project]
+set_property ip_output_repo c:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
 read_verilog -library xil_defaultlib {
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/clock.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/cu.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/display.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dist_calculator.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dp.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dtn_1.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fifo.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fnd.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/fsm.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.cu.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/uart.top.v
-  C:/Users/parkj/250325_Uart_Sensor-1/project_3/project_3.srcs/sources_1/new/top.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/btn_start.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/clock.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/cu.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/display.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/dist_calculator.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/dp.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/dtn_1.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/dut_ctr_2.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/fifo.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/fnd.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/fsm.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/uart.cu.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/uart.top.v
+  C:/Users/parkj/Desktop/Verilog_Project_3/250325_Uart_Sensor/project_3/project_3.srcs/sources_1/new/top.v
 }
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being

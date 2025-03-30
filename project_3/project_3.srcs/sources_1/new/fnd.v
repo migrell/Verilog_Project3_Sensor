@@ -39,53 +39,58 @@ module fnd_controller (
 
     // 클럭 분주 (100Hz)
     clk_divider U_clk_divider (
-        .clk(clk),
+        .clk  (clk),
         .reset(reset),
         .o_clk(w_clk_100hz)
     );
 
     // 디스플레이 선택
     counter_8 U_counter_8 (
-        .clk(w_clk_100hz),
+        .clk  (w_clk_100hz),
         .reset(reset),
         .o_sel(w_seg_sel)
     );
 
     decoder_3x8 U_decoder (
         .seg_select(w_seg_sel),
-        .seg_comm(fnd_comm)
+        .seg_comm  (fnd_comm)
     );
 
     // BCD 분리기
-    digit_splitter #(.BIT_WIDTH(7)) U_msec_ds (
+    digit_splitter #(
+        .BIT_WIDTH(7)
+    ) U_msec_ds (
         .bcd(msec),
         .digit_1(w_digit_msec_1),
         .digit_10(w_digit_msec_10)
     );
 
-    digit_splitter #(.BIT_WIDTH(6)) U_sec_ds (
+    digit_splitter #(
+        .BIT_WIDTH(6)
+    ) U_sec_ds (
         .bcd(sec),
         .digit_1(w_digit_sec_1),
         .digit_10(w_digit_sec_10)
     );
 
-    digit_splitter #(.BIT_WIDTH(6)) U_min_ds (
+    digit_splitter #(
+        .BIT_WIDTH(6)
+    ) U_min_ds (
         .bcd(min),
         .digit_1(w_digit_min_1),
         .digit_10(w_digit_min_10)
     );
 
-    digit_splitter #(.BIT_WIDTH(5)) U_hour_ds (
+    digit_splitter #(
+        .BIT_WIDTH(5)
+    ) U_hour_ds (
         .bcd(hour),
         .digit_1(w_digit_hour_1),
         .digit_10(w_digit_hour_10)
     );
 
-    // 센서 값 분리
-    wire [7:0] sensor_value = {hour[4:0], msec[6:3]};  // 센서 값 구성
-    wire [3:0] sensor_ones = msec % 10;                // 1의 자리
-    wire [3:0] sensor_tens = msec / 10;                // 10의 자리
-
+    wire [3:0] sensor_ones = msec % 10;  // 1의 자리
+    wire [3:0] sensor_tens = msec / 10;  // 10의 자리
     // FND 표시 숫자와 도트 설정
     reg [3:0] r_bcd;
     reg dot_out;
@@ -97,52 +102,125 @@ module fnd_controller (
         case (current_state)
             3'b000: begin  // Stopwatch Mode Msec:Sec
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = w_digit_sec_1;  dot_out = 1'b1; end
-                    2'b01: begin r_bcd = w_digit_sec_10; dot_out = 1'b1; end
-                    2'b10: begin r_bcd = w_digit_msec_1; dot_out = ~r_dot_toggle; end
-                    2'b11: begin r_bcd = w_digit_msec_10;dot_out = 1'b1; end
+                    2'b00: begin
+                        r_bcd   = w_digit_sec_1;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        r_bcd   = w_digit_sec_10;
+                        dot_out = 1'b1;
+                    end
+                    2'b10: begin
+                        r_bcd   = w_digit_msec_1;
+                        dot_out = ~r_dot_toggle;
+                    end
+                    2'b11: begin
+                        r_bcd   = w_digit_msec_10;
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
             3'b001: begin  // Stopwatch Mode Hour:Min
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = w_digit_min_1;  dot_out = 1'b1; end
-                    2'b01: begin r_bcd = w_digit_min_10; dot_out = 1'b1; end
-                    2'b10: begin r_bcd = w_digit_hour_1; dot_out = ~r_dot_toggle; end
-                    2'b11: begin r_bcd = w_digit_hour_10;dot_out = 1'b1; end
+                    2'b00: begin
+                        r_bcd   = w_digit_min_1;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        r_bcd   = w_digit_min_10;
+                        dot_out = 1'b1;
+                    end
+                    2'b10: begin
+                        r_bcd   = w_digit_hour_1;
+                        dot_out = ~r_dot_toggle;
+                    end
+                    2'b11: begin
+                        r_bcd   = w_digit_hour_10;
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
             3'b010: begin  // Clock Mode Sec:Msec
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = w_digit_msec_1; dot_out = 1'b1; end
-                    2'b01: begin r_bcd = w_digit_msec_10;dot_out = 1'b1; end
-                    2'b10: begin r_bcd = w_digit_sec_1;  dot_out = ~r_dot_toggle; end
-                    2'b11: begin r_bcd = w_digit_sec_10; dot_out = 1'b1; end
+                    2'b00: begin
+                        r_bcd   = w_digit_msec_1;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        r_bcd   = w_digit_msec_10;
+                        dot_out = 1'b1;
+                    end
+                    2'b10: begin
+                        r_bcd   = w_digit_sec_1;
+                        dot_out = ~r_dot_toggle;
+                    end
+                    2'b11: begin
+                        r_bcd   = w_digit_sec_10;
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
             3'b011: begin  // Clock Mode Hour:Min
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = w_digit_min_1;  dot_out = 1'b1; end
-                    2'b01: begin r_bcd = w_digit_min_10; dot_out = 1'b1; end
-                    2'b10: begin r_bcd = w_digit_hour_1; dot_out = ~r_dot_toggle; end
-                    2'b11: begin r_bcd = w_digit_hour_10;dot_out = 1'b1; end
+                    2'b00: begin
+                        r_bcd   = w_digit_min_1;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        r_bcd   = w_digit_min_10;
+                        dot_out = 1'b1;
+                    end
+                    2'b10: begin
+                        r_bcd   = w_digit_hour_1;
+                        dot_out = ~r_dot_toggle;
+                    end
+                    2'b11: begin
+                        r_bcd   = w_digit_hour_10;
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
-            3'b100, 3'b101: begin  // 초음파 센서 모드 (CM/Inch)
+            3'b100: begin  // 초음파 센서 모드
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = sensor_ones; dot_out = 1'b1; end
-                    2'b01: begin r_bcd = sensor_tens; dot_out = 1'b1; end
-                    default: begin r_bcd = 4'd0; dot_out = 1'b1; end
+                    2'b00: begin
+                        // 1의 자리 직접 계산
+                        r_bcd   = msec % 10;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        // 10의 자리 직접 계산
+                        r_bcd   = (msec / 10) % 10;
+                        dot_out = 1'b1;
+                    end
+                    2'b10: begin
+                        r_bcd   = 4'hC;  // 'C' 문자 추가 (CM 표시)
+                        dot_out = 1'b1;
+                    end
+                    2'b11: begin
+                        r_bcd   = 4'd0;  // 앞자리는 0으로 표시
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
+
             3'b110, 3'b111: begin  // 온습도 모드
                 case (w_seg_sel[1:0])
-                    2'b00: begin r_bcd = sensor_ones; dot_out = 1'b1; end
-                    2'b01: begin r_bcd = sensor_tens; dot_out = 1'b1; end
-                    default: begin r_bcd = 4'd0; dot_out = 1'b1; end
+                    2'b00: begin
+                        r_bcd   = sensor_ones;
+                        dot_out = 1'b1;
+                    end
+                    2'b01: begin
+                        r_bcd   = sensor_tens;
+                        dot_out = 1'b1;
+                    end
+                    default: begin
+                        r_bcd   = 4'd0;
+                        dot_out = 1'b1;
+                    end
                 endcase
             end
             default: begin
-                r_bcd = 4'd0;
+                r_bcd   = 4'd0;
                 dot_out = 1'b1;
             end
         endcase
@@ -386,14 +464,14 @@ module dot_module (
 endmodule
 
 
-module tick_generator(
+module tick_generator (
     input clk,
     input reset,
     output reg tick_10msec
 );
     // 100MHz 클럭에서 10ms 마다 틱 생성 (1,000,000 클럭 카운트)
     reg [19:0] counter;
-    
+
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             counter <= 0;
@@ -401,7 +479,7 @@ module tick_generator(
         end else begin
             if (counter >= 1_000_000 - 1) begin  // 10ms @ 100MHz
                 counter <= 0;
-                tick_10msec <= 1; // 펄스 생성
+                tick_10msec <= 1;  // 펄스 생성
             end else begin
                 counter <= counter + 1;
                 tick_10msec <= 0;

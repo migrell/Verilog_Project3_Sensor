@@ -3,14 +3,14 @@
 module top_dut (
     input clk,
     input rst,
-    input btn_start,
+    input btn_run,          // btn_start에서 btn_run으로 변경
     input btn_next,  // 추가 버튼 입력
     input [1:0] hw_sw,  // XDC 파일에 정의된 스위치
-
+    
     output [8:0] led,  // 9개 LED로 확장
     output fsm_error,
-    output dut_io,
-
+    output dut_io, 
+    
     // FSM 상태 모니터링을 위한 출력
     output idle,
     output start,
@@ -22,22 +22,22 @@ module top_dut (
     output data_bit_out,
     output stop_out
 );
+
     // 내부 신호
     wire tick_10msec;
     wire [3:0] current_state;
     wire [7:0] dnt_data;
     wire [7:0] dnt_sensor_data;
     wire sensor_data;
-
     
-    wire btn_start_clean;
+    wire btn_run_clean;     // btn_start_clean에서 btn_run_clean으로 변경
     wire btn_next_clean;
-
+    
     // DUT 컨트롤러 인스턴스
     dut_ctr U_DUT_CTR (
         .clk(clk),
         .rst(rst),
-        .btn_start(btn_start_clean),
+        .btn_run(btn_run_clean),  // btn_start에서 btn_run으로 변경
         .btn_next(btn_next_clean),  // 추가 버튼 연결
         .tick_counter(tick_10msec),
         .sensor_data(sensor_data),
@@ -45,7 +45,7 @@ module top_dut (
         .dnt_data(dnt_data),
         .dnt_sensor_data(dnt_sensor_data),
         .dnt_io(dut_io),
-
+        
         // FSM 상태 모니터링 출력 연결
         .idle(idle),
         .start(start),
@@ -57,38 +57,36 @@ module top_dut (
         .data_bit_out(data_bit_out),
         .stop_out(stop_out)
     );
-
+    
     // 틱 생성기 인스턴스
     tick_gen U_TICK_GEN (
         .clk(clk),
         .rst(rst),
         .tick_10msec(tick_10msec)
     );
-
-
+    
     debounce_btn U_DEBOUNCE_START (
         .clk(clk),
         .rst(rst),
-        .noisy_btn(btn_start),
-        .debounced_btn(btn_start_clean)
+        .noisy_btn(btn_run),       // btn_start에서 btn_run으로 변경
+        .debounced_btn(btn_run_clean)  // btn_start_clean에서 btn_run_clean으로 변경
     );
-
+    
     debounce_btn U_DEBOUNCE_NEXT (
         .clk(clk),
         .rst(rst),
         .noisy_btn(btn_next),
         .debounced_btn(btn_next_clean)
     );
-
-
+    
     // FSM 오류 감지 로직
     assign fsm_error = (current_state > 4'b1000) || 
-                      ((idle != 1) && (start != 1) && (wait_state != 1) && 
-                       (sync_low_out != 1) && (sync_high_out != 1) && 
-                       (data_sync_out != 1) && (data_bit_out != 1) && 
-                       (stop_out != 1) && (read != 1));
-
-    // 9개 LED 배열 직접 연결 - 상태 출력을 LED에 직접 매핑
+                       ((idle != 1) && (start != 1) && (wait_state != 1) && 
+                        (sync_low_out != 1) && (sync_high_out != 1) && 
+                        (data_sync_out != 1) && (data_bit_out != 1) && 
+                        (stop_out != 1) && (read != 1));
+    
+    // 9개 LED 배열 직접 연결 - 상태 출력을 LED에 직접 매핑 //
     assign led = {
         idle,
         start,
@@ -102,7 +100,6 @@ module top_dut (
     };
 
 endmodule
-
 // 9개 LED 배열 직접 연결 - 상태
 
 // `timescale 1ns / 1ps
