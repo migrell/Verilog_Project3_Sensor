@@ -70,7 +70,9 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
+set_param chipscope.maxJobs 4
 set_param synth.incrementalSynthesisCache C:/Users/kccistc/Desktop/Verilog_Project3_Sensor/project_3/.Xil/Vivado-7680-DESKTOP-7CFQ9ND/incrSyn
+set_param xicom.use_bs_reader 1
 set_msg_config -id {Synth 8-256} -limit 10000
 set_msg_config -id {Synth 8-638} -limit 10000
 OPTRACE "Creating in-memory project" START { }
