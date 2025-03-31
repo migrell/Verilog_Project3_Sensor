@@ -19,9 +19,9 @@ module dist_calculator(
     // 내부 레지스터
     reg [1:0] current_state;
     reg [1:0] next_state;
-    reg [31:0] counter;           // 범용 카운터
-    reg [31:0] echo_counter;      // 에코 펄스 폭 측정용 카운터
-    reg [31:0] distance_cm;       // 계산된 거리 (cm)
+    reg [19:0] counter;           // 범용 카운터
+    reg [19:0] echo_counter;      // 에코 펄스 폭 측정용 카운터
+    reg [6:0] distance_cm;        // 계산된 거리 (cm)
     reg echo_prev;                // 이전 에코 신호 상태
     reg btn_prev;                 // 이전 버튼 상태
     
@@ -29,24 +29,29 @@ module dist_calculator(
     wire echo_posedge = echo && !echo_prev;
     wire echo_negedge = !echo && echo_prev;
     
-    // 버튼 엣지 감지
+    // 버튼 엣지 감지 - 버튼이 눌리면 바로 시작
     wire btn_posedge = btn_run && !btn_prev;
-
+    wire btn_active = btn_run;    // 버튼이 활성화 상태면 측정 시작
+    
     // 마지막 측정된 유효한 거리 값 저장
     reg [6:0] last_valid_distance;
     
+    // 에코 측정 제한 시간 및 트리거 폭
+    localparam ECHO_TIMEOUT = 20'd500000;  // 약 5ms
+    localparam TRIGGER_WIDTH = 20'd1000;   // 10us
+    
     // msec 출력 할당 - 유효한 측정값만 출력
-    assign msec = (distance_cm > 0) ? 
-                  ((distance_cm > 99) ? 99 : distance_cm[6:0]) : 
-                  last_valid_distance;  // 유효한 측정이 없으면 마지막 값 유지
+    assign msec = (distance_cm > 0 && distance_cm <= 99) ? 
+                  distance_cm[6:0] : 
+                  last_valid_distance;
 
     // 유효한 거리 저장 로직
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            last_valid_distance <= 7'd15;  // 기본값 15cm로 시작
+            last_valid_distance <= 7'd1;  // 기본값 1cm로 수정
         end else if (distance_cm > 0 && distance_cm <= 99) begin
             // 유효한 측정이 있으면 값 업데이트
-            last_valid_distance <= distance_cm[6:0];
+            last_valid_distance <= distance_cm;
         end
     end
 
@@ -63,18 +68,18 @@ module dist_calculator(
         end
     end
 
-    // 상태 머신 - 다음 상태 결정
+    // 상태 머신 - 다음 상태 결정 - btn_active 신호 기반으로 시작
     always @(*) begin
         case (current_state)
             IDLE: begin
-                if (btn_posedge)  // 버튼 에지 감지로만 시작 (눌렀다 떼었을 때)
+                if (btn_active)  // 버튼이 활성화 상태면 측정 시작
                     next_state = TRIGGER;
                 else
                     next_state = IDLE;
             end
             
             TRIGGER: begin
-                if (counter >= 1000) begin  // 10us (1000 클럭 @ 100MHz)
+                if (counter >= TRIGGER_WIDTH) begin  // 10us (1000 클럭 @ 100MHz)
                     next_state = WAIT_ECHO;
                 end else begin
                     next_state = TRIGGER;
@@ -84,7 +89,7 @@ module dist_calculator(
             WAIT_ECHO: begin
                 if (echo_posedge)  // 에코 신호가 시작되면
                     next_state = COUNT_ECHO;
-                else if (counter >= 30000000)  // 300ms 타임아웃
+                else if (counter >= ECHO_TIMEOUT)  // 5ms 타임아웃
                     next_state = IDLE;  // 타임아웃 시 IDLE로 돌아감
                 else
                     next_state = WAIT_ECHO;
@@ -92,6 +97,8 @@ module dist_calculator(
             
             COUNT_ECHO: begin
                 if (echo_negedge)  // 에코 신호가 끝나면
+                    next_state = IDLE;
+                else if (echo_counter >= ECHO_TIMEOUT)  // 에코 측정 타임아웃 (5ms)
                     next_state = IDLE;
                 else
                     next_state = COUNT_ECHO;
@@ -119,31 +126,38 @@ module dist_calculator(
                     trigger <= 0;
                     led_indicator <= 4'b0001;
                     dist_start <= 0;
-                    // IDLE 상태에서는 done 신호가 유지됨
+                    
+                    // 다음 상태가 TRIGGER면 done 리셋
+                    if (next_state == TRIGGER) begin
+                        done <= 0;
+                    end else begin
+                        done <= 1;  // IDLE 상태에서는 done 유지
+                    end
                 end
                 
                 TRIGGER: begin
                     counter <= counter + 1;
-                    trigger <= 1;  // 트리거 신호 생성 (10us)
+                    // 트리거 신호 안정화 (항상 10us 유지)
+                    if (counter < TRIGGER_WIDTH) begin
+                        trigger <= 1;  // 트리거 신호 생성 (10us)
+                    end else begin
+                        trigger <= 0;  // 트리거 신호 확실히 끔
+                    end
+                    
                     led_indicator <= 4'b0010;
                     dist_start <= 1;
-                    done <= 0;  // 새 측정 시작할 때 done 리셋
-                    
-                    if (counter >= 1000) begin
-                        trigger <= 0;  // 트리거 신호 종료
-                    end
+                    done <= 0;
                 end
                 
                 WAIT_ECHO: begin
                     counter <= counter + 1;  // 타임아웃 카운터
-                    trigger <= 0;
+                    trigger <= 0;  // 트리거 확실히 비활성화
                     led_indicator <= 4'b0100;
                     dist_start <= 0;
                     
-                    // 타임아웃 시 거리 값을 0으로 설정 (마지막 유효 측정값 유지)
-                    if (counter >= 30000000) begin
-                        distance_cm <= 0;  // 거리 값 초기화
-                        done <= 1;  // 타임아웃 시에도 done 신호 생성
+                    // 타임아웃 시 
+                    if (counter >= ECHO_TIMEOUT) begin  // 5ms 타임아웃
+                        done <= 1;
                     end
                 end
                 
@@ -151,21 +165,26 @@ module dist_calculator(
                     echo_counter <= echo_counter + 1;  // 에코 시간 측정
                     led_indicator <= 4'b1000;
                     
-                    if (echo_negedge) begin
+                    if (echo_negedge || echo_counter >= ECHO_TIMEOUT) begin
                         done <= 1;  // 측정 완료
                         
-                        if (echo_counter > 100 && echo_counter < 30000000) begin  // 유효한 측정 범위 내일 때만
-                            // 거리 계산: Distance(cm) = echo_time(us) / 58
-                            // 100MHz에서 1us = 100 clock cycles
-                            // 따라서 Distance(cm) = (echo_counter * 10) / 5800 
-                            distance_cm <= (echo_counter * 10) / 5800;
+                        if (echo_negedge && echo_counter > 0 && echo_counter < ECHO_TIMEOUT) begin
+                            // 거리 계산 수정 - 스케일링 조정
+                            // 58us per cm 기준으로 계산
+                            // 거리 = echo_time / 58us = echo_counter / 5800
                             
-                            // 최소값 제한 (너무 작은 값 방지)
-                            if ((echo_counter * 10) / 5800 == 0)
+                            // echo_counter는 100MHz 클럭 카운트
+                            // 1us = 100 클럭
+                            
+                            // 거리(cm) = echo_counter / (100 * 58) = echo_counter / 5800
+                            if (echo_counter < 20'd5800) begin
                                 distance_cm <= 7'd1;  // 최소 1cm
-                        end else begin
-                            // 너무 짧거나 긴 에코 시간이면 0으로 설정
-                            distance_cm <= 0;
+                            end else if (echo_counter > 20'd450000) begin  // 약 80cm 이상
+                                distance_cm <= 7'd80;  // 최대 80cm로 제한
+                            end else begin
+                                // 거리 계산 및 반올림
+                                distance_cm <= (echo_counter / 20'd5800);
+                            end
                         end
                     end
                 end
