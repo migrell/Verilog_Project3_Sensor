@@ -8,7 +8,7 @@ module dp (
 );
     // 내부 신호
     reg [19:0] echo_counter;     // 에코 펄스 폭 측정
-    reg [19:0] timeout_counter;  // 타임아웃 카운터 추가
+    reg [23:0] tick_counter;     // 타이밍 카운터 추가 (더 넓은 범위로 설정)
     reg echo_prev;               // 이전 에코 상태
     reg echo_detected;           // 에코 감지 플래그 추가
     reg measuring;               // 측정 중 플래그
@@ -17,11 +17,26 @@ module dp (
     wire echo_posedge = echo && !echo_prev;
     wire echo_negedge = !echo && echo_prev;
     
+    // 10ms 타이밍 생성 (100MHz 클럭 기준) - 내부에서 직접 생성
+    wire tick_10ms = (tick_counter >= 24'd1_000_000); // 10ms마다 1 생성
+
+    // 틱 카운터 업데이트
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            tick_counter <= 24'd0;
+        end else begin
+            if (tick_counter >= 24'd1_000_000) begin
+                tick_counter <= 24'd0; // 카운터 리셋
+            end else begin
+                tick_counter <= tick_counter + 1'b1;
+            end
+        end
+    end
+    
     // 에코 펄스 폭 측정 및 거리 계산
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             echo_counter <= 0;
-            timeout_counter <= 0;
             echo_prev <= 0;
             echo_detected <= 0;
             msec <= 0;
@@ -38,14 +53,8 @@ module dp (
             if (start_trigger) begin
                 measuring <= 1;
                 echo_counter <= 0;
-                timeout_counter <= 0;
                 echo_detected <= 0;
                 done <= 0;
-            end
-            
-            // 측정 중 타임아웃 카운터 증가
-            if (measuring) begin
-                timeout_counter <= timeout_counter + 1;
             end
             
             // 에코 신호 상승 에지 (초음파 반사파 도착 시작)
@@ -73,17 +82,23 @@ module dp (
                 measuring <= 0;
             end
             
-            // 타임아웃 처리 (10ms = 1,000,000 클럭 @ 100MHz)
-            if (measuring && timeout_counter > 1_000_000) begin
-                if (echo_detected) begin
-                    // 에코가 시작되었지만 하강 에지가 없는 경우
-                    msec <= 7'd99; // 최대 거리로 설정
-                end else begin
-                    // 에코 자체가 감지되지 않은 경우
-                    msec <= 7'd0;  // 에러 표시 (0cm)
+            // 타임아웃 처리 (독립적인 내부 틱 사용)
+            if (measuring && tick_10ms) begin
+                // 측정 시작 후 10ms 이상 경과했는데도 에코 측정이 완료되지 않았다면
+                if (!echo_detected) begin
+                    // 에코 자체가 감지되지 않은 경우 (장애물 없음 또는 응답 없음)
+                    msec <= 7'd0;
+                    done <= 1;
+                    measuring <= 0;
+                end else if (!echo && echo_detected) begin
+                    // 에코가 시작되었고 이미 끝난 경우 (정상 측정 완료)
+                    // 이 경우는 위의 echo_negedge 조건에서 처리됨
+                end else if (echo && echo_detected && echo_counter > 58*400) begin
+                    // 에코가 시작되었지만 너무 오래 지속되는 경우 (범위 초과)
+                    msec <= 7'd99;
+                    done <= 1;
+                    measuring <= 0;
                 end
-                done <= 1;
-                measuring <= 0;
             end
         end
     end

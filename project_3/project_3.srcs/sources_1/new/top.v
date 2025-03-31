@@ -39,7 +39,7 @@ module top_stopwatch (
     wire w_btn_run, w_btn_clear;
     // 모드별 버튼 분기
     wire w_btn_hour;
-
+    
     // FSM 신호들 (3비트로 확장)
     wire [2:0] current_state;
     wire is_clock_mode, is_ultrasonic_mode, is_temp_humid_mode;
@@ -79,10 +79,16 @@ module top_stopwatch (
     wire [6:0] w_msec_ultra;  // dist_calculator에서 나오는 msec
     wire       w_dp_done_dp;  // dp 모듈에서 나오는 done
     wire       w_dp_done_ultra;  // dist_calculator에서 나오는 done
+    
+    // 멀티드라이버 해결을 위한 트리거 신호 분리
+    wire ultrasonic_trigger;  // dist_calculator 모듈에서 나오는 트리거 신호
 
     // 실제 신호 선택에 사용할 mux
     assign w_msec = is_ultrasonic_mode ? w_msec_ultra : w_msec_dp;
     assign w_dp_done = is_ultrasonic_mode ? w_dp_done_ultra : w_dp_done_dp;
+    
+    // 트리거 신호 선택 - 멀티드라이버 해결을 위해 cu_trigger만 사용
+    assign trigger = cu_trigger;
 
     // 메타스테이블 방지를 위한 에코 신호 동기화
     reg  [2:0] echo_sync;
@@ -102,17 +108,17 @@ module top_stopwatch (
     wire btn_start_signal;
     assign btn_start_signal = (is_ultrasonic_mode ? (btn_run | ultrasonic_mode_btn) : 1'b0) | ultrasonic_enable;
 
-    // 타이밍 신호 생성 - 10ms 틱 생성기
+    // 타이밍 신호 생성 - 10ms 틱 생성기 (방법 1: U_TICK_GEN 유지)
     tick_generator U_TICK_GEN (
         .clk(clk),
         .reset(reset),
-        .tick_10msec(w_tick_10msec)
+        .tick_10msec(w_tick_10msec)  // 정상 연결
     );
 
     // 신호 연결 
     assign done = w_dp_done;  // 측정 완료 신호 연결
     assign fsm_error = cu_fsm_error;  // FSM 오류 신호 연결
-    assign trigger = cu_trigger;  // 트리거 신호 cu에서 연결
+    // 트리거 신호는 위에서 직접 할당함
 
     // DUT 컨트롤러 신호
     wire sensor_data;
@@ -278,14 +284,13 @@ module top_stopwatch (
         .reset(reset),
         .btn_run(btn_start_signal),  // btn_run으로 측정 시작
         .echo(sync_echo),  // 동기화된 에코 신호 사용
-        .dp_done(w_dp_done),  // DP 측정 완료 신호
+        .dp_done(w_dp_done_dp),  // dp 모듈에서 나오는 done 신호 연결
         .tick_10msec(w_tick_10msec),  // 10ms 주기 신호
         .trigger(cu_trigger),  // 초음파 센서 트리거 핀
         .start_dp(w_start_dp),  // DP 시작 신호
         .led_status(cu_led_status),  // LED 상태 표시
         .fsm_error(cu_fsm_error)  // FSM 오류 신호
     );
-
 
     // 초음파 DP 모듈 인스턴스 수정
     dp U_DP (
@@ -297,15 +302,13 @@ module top_stopwatch (
         .msec         (w_msec_dp)      // 이름 수정
     );
 
-
-
     // 초음파 거리 측정 모듈 수정
     dist_calculator U_ULTRASONIC (
         .clk          (clk),
         .reset        (reset),
         .echo         (sync_echo),
         .btn_run      (btn_start_signal),
-        .trigger      (trigger),
+        .trigger      (ultrasonic_trigger),  // 내부에서만 사용하는 트리거 신호로 변경
         .msec         (w_msec_ultra),      // 이름 수정
         .led_indicator(led_indicator),
         .dist_start   (dist_start),
@@ -374,9 +377,9 @@ module top_stopwatch (
     // LED 디버깅 개선 - 각 신호 상태 표시
     assign led = is_ultrasonic_mode ? {
         sync_echo,            // LED[8]: 동기화된 에코 신호 상태
-        btn_run,  // LED[7]: 버튼 입력 상태
-        btn_start_signal,  // LED[6]: 시작 신호 상태
-        cu_trigger,  // LED[5]: 트리거 신호 상태
+        btn_run,              // LED[7]: 버튼 입력 상태
+        btn_start_signal,     // LED[6]: 시작 신호 상태
+        cu_trigger,           // LED[5]: 트리거 신호 상태
         ultrasonic_distance[3:0]  // LED[4:1]: 측정된 거리
         } :
         // 온습도 모드일 때 DUT 상태 표시
