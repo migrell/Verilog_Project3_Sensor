@@ -5,7 +5,7 @@ module dut_ctr(
     input tick_counter,
     input btn_next,
 
-    output reg sensor_data,
+    input sensor_data,   // output reg에서 input으로 변경
     output reg [3:0] current_state,
     output reg [7:0] dnt_data,
     output reg [7:0] dnt_sensor_data,
@@ -68,7 +68,7 @@ module dut_ctr(
             tick_prev <= 0;
             pulse_active <= 0;
             pulse_counter <= 0;
-            sensor_data <= 0;
+            // sensor_data <= 0; // 이 줄 제거
         end else begin
             btn_sync <= {btn_sync[1:0], btn_run};
             btn_edge <= (btn_sync[1] & ~btn_sync[2]);
@@ -80,11 +80,11 @@ module dut_ctr(
             if (pulse_active) begin
                 if (pulse_counter < 20'd50000) begin  // 약 0.5ms 지속 (100MHz 클럭 기준)
                     pulse_counter <= pulse_counter + 1;
-                    sensor_data <= 1'b1;  // 펄스 활성화 기간동안 high
+                    // sensor_data <= 1'b1;  // 이 줄 제거
                 end else begin
                     pulse_active <= 0;
                     pulse_counter <= 0;
-                    sensor_data <= 1'b0;  // 펄스 종료 후 low
+                    // sensor_data <= 1'b0;  // 이 줄 제거
                 end
             end
         end
@@ -274,7 +274,6 @@ module dut_ctr(
         end
     end
 endmodule
-
 
 
 

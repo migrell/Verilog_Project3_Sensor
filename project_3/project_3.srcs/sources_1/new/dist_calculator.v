@@ -2,11 +2,11 @@ module dist_calculator(
     input clk,                    // 시스템 클럭 (100MHz)
     input reset,                  // 리셋 신호
     input echo,                   // 초음파 센서 에코 핀
-    input btn_run,                // 시작 버튼 입력 (btn_start에서 변경)
+    input btn_run,                // 시작 버튼 입력
     output reg trigger,           // 초음파 센서 트리거 핀
     output [6:0] msec,            // 측정된 거리 값 (0-99cm)
     output reg [3:0] led_indicator,  // LED 상태 표시
-    output reg dist_start,        // 측정 시작 플래그 (start에서 변경)
+    output reg dist_start,        // 측정 시작 플래그
     output reg done               // 측정 완료 플래그
 );
 
@@ -29,7 +29,7 @@ module dist_calculator(
     wire echo_posedge = echo && !echo_prev;
     wire echo_negedge = !echo && echo_prev;
     
-    // 버튼 엣지 감지 - 버튼이 눌리면 바로 시작
+    // 버튼 엣지 감지
     wire btn_posedge = btn_run && !btn_prev;
     wire btn_active = btn_run;    // 버튼이 활성화 상태면 측정 시작
     
@@ -40,10 +40,13 @@ module dist_calculator(
     localparam ECHO_TIMEOUT = 20'd500000;  // 약 5ms
     localparam TRIGGER_WIDTH = 20'd1000;   // 10us
     
-    // msec 출력 할당 - 유효한 측정값만 출력
-    assign msec = (distance_cm > 0 && distance_cm <= 99) ? 
-                  distance_cm[6:0] : 
-                  last_valid_distance;
+    // msec 출력 할당 - 내부 wire로 연결
+    wire [6:0] internal_distance = (distance_cm > 0 && distance_cm <= 99) ? 
+                                   distance_cm[6:0] : 
+                                   last_valid_distance;
+    
+    // 단일 드라이버 할당
+    assign msec = internal_distance;
 
     // 유효한 거리 저장 로직
     always @(posedge clk or posedge reset) begin
@@ -68,7 +71,7 @@ module dist_calculator(
         end
     end
 
-    // 상태 머신 - 다음 상태 결정 - btn_active 신호 기반으로 시작
+    // 상태 머신 - 다음 상태 결정
     always @(*) begin
         case (current_state)
             IDLE: begin
@@ -137,13 +140,8 @@ module dist_calculator(
                 
                 TRIGGER: begin
                     counter <= counter + 1;
-                    // 트리거 신호 안정화 (항상 10us 유지)
-                    if (counter < TRIGGER_WIDTH) begin
-                        trigger <= 1;  // 트리거 신호 생성 (10us)
-                    end else begin
-                        trigger <= 0;  // 트리거 신호 확실히 끔
-                    end
-                    
+                    // 트리거 신호 안정화
+                    trigger <= (counter < TRIGGER_WIDTH) ? 1'b1 : 1'b0;
                     led_indicator <= 4'b0010;
                     dist_start <= 1;
                     done <= 0;
@@ -169,14 +167,7 @@ module dist_calculator(
                         done <= 1;  // 측정 완료
                         
                         if (echo_negedge && echo_counter > 0 && echo_counter < ECHO_TIMEOUT) begin
-                            // 거리 계산 수정 - 스케일링 조정
-                            // 58us per cm 기준으로 계산
-                            // 거리 = echo_time / 58us = echo_counter / 5800
-                            
-                            // echo_counter는 100MHz 클럭 카운트
-                            // 1us = 100 클럭
-                            
-                            // 거리(cm) = echo_counter / (100 * 58) = echo_counter / 5800
+                            // 거리 계산
                             if (echo_counter < 20'd5800) begin
                                 distance_cm <= 7'd1;  // 최소 1cm
                             end else if (echo_counter > 20'd450000) begin  // 약 80cm 이상

@@ -1,7 +1,7 @@
 module cu(
     input clk,               // 시스템 클럭 (100MHz)
     input reset,             // 리셋 신호
-    input btn_start,         // 시작 버튼
+    input btn_run,         // 시작 버튼
     input echo,              // 에코 신호
     input dp_done,           // DP에서 측정 완료 신호
     input tick_10msec,       // 10msec 주기 신호
@@ -74,7 +74,7 @@ module cu(
     always @(*) begin
         case (current_state)
             IDLE: begin
-                if (btn_start)  // 버튼 입력으로 시작
+                if (btn_run)  // 버튼 입력으로 시작
                     next_state = TRIGGER;
                 else
                     next_state = IDLE;
@@ -166,7 +166,7 @@ module cu(
             endcase
             
             // 오류가 발생했을 때 오류 LED 깜빡임 또는 리셋 로직을 추가할 수 있음
-            if (btn_start) begin
+            if (btn_run) begin
                 fsm_error <= 0;  // 버튼을 누르면 오류 상태 클리어
                 if (error_count > 0)
                     error_count <= error_count - 1;

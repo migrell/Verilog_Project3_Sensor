@@ -1,68 +1,93 @@
-// dp.v 파일 수정 - 포트 연결 너비 일치하도록 
 module dp (
     input clk,
     input reset,
     input echo,
     input start_trigger,
-    output reg done,        // reg로 변경
-    output reg [6:0] msec   // reg로 변경
+    output reg done,       // reg로 변경
+    output reg [6:0] msec  // reg로 변경
 );
     // 내부 신호
-    reg [19:0] echo_counter; // 에코 펄스 폭 측정
-    reg echo_prev;           // 이전 에코 상태
-    reg measuring;           // 측정 중 플래그
+    reg [19:0] echo_counter;     // 에코 펄스 폭 측정
+    reg [19:0] timeout_counter;  // 타임아웃 카운터 추가
+    reg echo_prev;               // 이전 에코 상태
+    reg echo_detected;           // 에코 감지 플래그 추가
+    reg measuring;               // 측정 중 플래그
+    
+    // 에코 신호 엣지 감지 개선
+    wire echo_posedge = echo && !echo_prev;
+    wire echo_negedge = !echo && echo_prev;
     
     // 에코 펄스 폭 측정 및 거리 계산
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             echo_counter <= 0;
+            timeout_counter <= 0;
             echo_prev <= 0;
+            echo_detected <= 0;
             msec <= 0;
             done <= 0;
             measuring <= 0;
         end else begin
+            // 에코 엣지 감지를 위한 이전 상태 저장
             echo_prev <= echo;
-            done <= 0; // 기본값 설정
             
-            // 측정 시작 트리거
+            // 기본적으로 done 신호는 0으로 유지
+            if (done) done <= 0;
+            
+            // 시작 트리거를 받으면 측정 시작
             if (start_trigger) begin
                 measuring <= 1;
                 echo_counter <= 0;
+                timeout_counter <= 0;
+                echo_detected <= 0;
+                done <= 0;
             end
             
-            // 에코 펄스 상승 에지
-            if (echo && !echo_prev && measuring) begin
+            // 측정 중 타임아웃 카운터 증가
+            if (measuring) begin
+                timeout_counter <= timeout_counter + 1;
+            end
+            
+            // 에코 신호 상승 에지 (초음파 반사파 도착 시작)
+            if (echo_posedge && measuring) begin
                 echo_counter <= 0;
+                echo_detected <= 1;
             end
             
-            // 에코 펄스 폭 측정
-            if (echo && measuring) begin
+            // 에코 펄스 유지 중 카운터 증가
+            if (echo && measuring && echo_detected) begin
                 echo_counter <= echo_counter + 1;
             end
             
-            // 에코 펄스 하강 에지 (측정 완료)
-            if (!echo && echo_prev && measuring) begin
-                // 거리 = 펄스 폭(us) * 음속(340m/s) / 2
-                // = 펄스 폭(클럭 수) * 340 / 2 / 클럭주파수(MHz)
-                // 100MHz 클럭에서, 1cm = 58.24 클럭 사이클
-                // 따라서 거리(cm) = 에코 카운터 / 58
-                msec <= echo_counter / 58;
+            // 에코 신호 하강 에지 (측정 완료)
+            if (echo_negedge && measuring && echo_detected) begin
+                // 거리 계산: echo_counter / 58 (100MHz 클럭 기준)
+                if (echo_counter < 58) begin
+                    msec <= 7'd1; // 최소 1cm
+                end else if (echo_counter > 58*400) begin // 약 4m 이상
+                    msec <= 7'd99; // 최대 99cm로 제한
+                end else begin
+                    msec <= echo_counter / 58;
+                end
                 done <= 1;
                 measuring <= 0;
             end
             
-            // 타임아웃 처리
-            if (echo_counter > 1_000_000) begin // 10ms 이상 (범위 외)
-                msec <= 7'd99; // 최대 값으로 표시
+            // 타임아웃 처리 (10ms = 1,000,000 클럭 @ 100MHz)
+            if (measuring && timeout_counter > 1_000_000) begin
+                if (echo_detected) begin
+                    // 에코가 시작되었지만 하강 에지가 없는 경우
+                    msec <= 7'd99; // 최대 거리로 설정
+                end else begin
+                    // 에코 자체가 감지되지 않은 경우
+                    msec <= 7'd0;  // 에러 표시 (0cm)
+                end
                 done <= 1;
                 measuring <= 0;
             end
         end
     end
 endmodule
-
-
-
 
 // module dp(
 //     input clk,              // 시스템 클럭 (100MHz)
