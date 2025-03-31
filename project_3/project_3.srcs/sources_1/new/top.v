@@ -66,15 +66,38 @@ module top_stopwatch (
     wire [6:0] w_msec;
     wire w_dp_done;
     wire w_dist_start;
+    wire w_cu_trigger;
+    wire w_start_dp;
     wire w_fsm_error;
     wire w_tick_10msec;
+
+    // 초음파 CU와 DP 사이 연결 신호
+    wire cu_start_dp;
+
+    // 초음파 모드에서 btn_run 직접 연결 - 디바운싱된 버튼 입력 사용
+    wire direct_btn_input;
+    assign direct_btn_input = is_ultrasonic_mode ? btn_run : 1'b0;
+
+    // 초음파 제어 신호들
+    reg [24:0] auto_measure_counter;
+    reg auto_measure_pulse;
+    wire btn_start_signal;
+
+    // 초음파 버튼 시작 신호 - btn_run에 직접 연결
+    assign btn_start_signal = is_ultrasonic_mode ? btn_run : 1'b0;
+
+    // 타이밍 신호 생성 - 10ms 틱 생성기
+    tick_generator U_TICK_GEN (
+        .clk(clk),
+        .reset(reset),
+        .tick_10msec(w_tick_10msec)
+    );
 
     // assign 명령문 수정 - 변수명 충돌 해결
     assign w_dist_start = dist_start;  // dist_start 신호 연결
     assign done = w_dp_done;  // 측정 완료 신호 연결
     assign fsm_error = w_fsm_error;  // FSM 오류 신호 연결
-    assign dut_io = dnt_io;  // DHT 센서 IO 신호 연결
-
+    
     // DUT 컨트롤러 신호
     wire sensor_data;
     wire [3:0] dut_current_state;
@@ -86,13 +109,10 @@ module top_stopwatch (
     reg [25:0] uart_init_counter;
     reg uart_ready;
 
-    // 에코 신호 모니터링
-    reg echo_detected;  // 에코 신호가 감지되었는지 기록
-    reg [25:0] echo_mon_counter;  // 에코 모니터링 타이머
-
     // 측정된 거리 저장 레지스터
     reg [6:0] ultrasonic_distance;
 
+    // 초음파 거리 측정 및 저장 로직
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             ultrasonic_distance <= 7'd0;
@@ -109,39 +129,30 @@ module top_stopwatch (
         end
     end
 
-    // 에코 신호 확인 로직 추가
+    // 에코 신호 감지 및 처리 로직 개선
+    reg echo_prev;
+    wire echo_posedge = echo && !echo_prev;
+    wire echo_negedge = !echo && echo_prev;
+    
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            echo_detected <= 1'b0;
-            echo_mon_counter <= 26'd0;
-        end else if (is_ultrasonic_mode) begin
-            // 에코 신호 감지하면 플래그 설정
-            if (echo) begin
-                echo_detected <= 1'b1;
-            end
-
-            // 주기적으로 에코 감지 상태 초기화 (1초마다)
-            if (echo_mon_counter >= 26'd100000000) begin
-                echo_mon_counter <= 26'd0;
-                echo_detected <= 1'b0;
-            end else begin
-                echo_mon_counter <= echo_mon_counter + 1;
-            end
+            echo_prev <= 1'b0;
         end else begin
-            echo_detected <= 1'b0;
-            echo_mon_counter <= 26'd0;
+            echo_prev <= echo;
         end
     end
-
-    // btn_start 디바운싱 모듈 인스턴스 추가 - 상승 에지 감지 모듈로 변경
-    wire debounced_btn_run;
-
-    btn_start_debounce U_Btn_DB_ULTRASONIC (
-        .clk(clk),
-        .reset(reset),
-        .btn_run_in(ultrasonic_mode_btn),  // 입력은 T18에 매핑된 ultrasonic_mode_btn
-        .btn_run_out(debounced_btn_run)    // 디바운싱된 출력
-    );
+    
+    // 자동 측정 신호 비활성화 - 버튼 입력에만 의존
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            auto_measure_counter <= 25'd0;
+            auto_measure_pulse <= 1'b0;
+        end else begin
+            // 자동 측정 기능 비활성화
+            auto_measure_pulse <= 1'b0;
+            auto_measure_counter <= 25'd0;
+        end
+    end
 
     // UART 초기화 로직
     always @(posedge clk or posedge reset) begin
@@ -156,8 +167,6 @@ module top_stopwatch (
         end
     end
 
-
-
     // 하드웨어와 UART 스위치 신호 결합
     wire [3:0] combined_sw = hw_sw | {2'b00, uart_sw};
 
@@ -165,10 +174,6 @@ module top_stopwatch (
     wire final_btn_hour = (w_btn_hour | uart_btn_hour) & is_clock_mode;
     wire final_btn_min = (uart_btn_min) & is_clock_mode;
     wire final_btn_sec = (uart_btn_sec) & is_clock_mode;
-
-    // 초음파 버튼 시작 신호 - 디바운싱된 버튼 (상승 에지 감지)만 사용
-    wire ultrasonic_btn_run;
-    assign ultrasonic_btn_run = is_ultrasonic_mode ? debounced_btn_run : 1'b0;
 
     // 센서 데이터 표시용 MUX - 초음파 모드일 때는 저장된 거리 값 사용
     wire [7:0] display_sensor_data;
@@ -178,6 +183,12 @@ module top_stopwatch (
 
     // DHT11 센서 양방향 연결 (inout 포트에 연결)
     assign dht_data = dnt_io ? 1'bz : 1'b0;  // 출력 모드일 때만 0 출력, 입력 모드에서는 하이 임피던스
+    
+    // dut_io 출력 포트에 dnt_io 연결 (추가)
+    assign dut_io = dnt_io;
+    
+    // dht_data 입력 감지
+    assign sensor_data = dht_data;
 
     btn_debounce U_Btn_DB_RUN (
         .clk(clk),
@@ -273,24 +284,41 @@ module top_stopwatch (
         .o_hour(c_hour)
     );
 
-    // 초음파 거리 측정 모듈 - 상승 에지로만 측정 시작
+    // 초음파 거리 측정 모듈 - 버튼 입력을 직접 연결
     dist_calculator U_ULTRASONIC (
         .clk(clk),
         .reset(reset),
-        .echo(echo),
-        .btn_run(debounced_btn_run | ultrasonic_enable),  // 버튼 상승 에지로 측정 시작
-        .trigger(trigger),
-        .msec(w_msec),  // 초음파 거리 출력
-        .led_indicator(led_indicator),  // LED 인디케이터 연결
-        .dist_start(dist_start),  // dist_start 신호 연결
-        .done(w_dp_done)  // 측정 완료 신호 연결
+        .echo(echo),               // 에코 신호 직접 연결
+        .btn_run(btn_start_signal), // 시작 버튼 신호 직접 연결
+        .trigger(trigger),         // 트리거 신호 출력
+        .msec(w_msec),             // 측정된 거리 값
+        .led_indicator(led_indicator), // LED 인디케이터
+        .dist_start(dist_start),   // 측정 시작 플래그
+        .done(w_dp_done)           // 측정 완료 신호
     );
 
-    // 10ms 틱 생성기
-    tick_generator U_TICK_GEN (
-        .clk(clk),
-        .reset(reset),
-        .tick_10msec(w_tick_10msec)
+    // 초음파 센서 CU 모듈 추가
+    cu U_CU (
+        .clk(clk),               
+        .reset(reset),             
+        .btn_start(btn_start_signal),         // 시작 버튼
+        .echo(echo),              // 에코 신호
+        .dp_done(w_dp_done),           // DP에서 측정 완료 신호
+        .tick_10msec(w_tick_10msec),       // 10msec 주기 신호
+        .trigger(w_cu_trigger),      // 초음파 센서 트리거 핀 (내부 연결용)
+        .start_dp(cu_start_dp),     // DP 시작 신호
+        .led_status(),  // LED 상태 표시
+        .fsm_error(w_fsm_error)     // FSM 오류 신호
+    );
+
+    // 초음파 센서 DP 모듈 추가
+    dp U_DP (
+        .clk(clk),              
+        .reset(reset),            
+        .echo(echo),             
+        .start_trigger(cu_start_dp),    // CU에서 받은 시작 트리거
+        .done(w_dp_done),        // 측정 완료 신호 (dist_calculator와 공유)
+        .msec()   // 측정된 거리 (dist_calculator와 공유하여 사용하지 않음)
     );
 
     // DUT 컨트롤러 (온습도 센서 제어)
@@ -348,19 +376,19 @@ module top_stopwatch (
         .hour(is_ultrasonic_mode || is_temp_humid_mode ? 5'd0 : disp_hour),
         .fnd_font(fnd_font),
         .fnd_comm(fnd_comm)
-
-        
     );
+    
     // dist_IDLE 출력 신호 할당 (초음파 모듈의 dist_IDLE 상태를 확인하기 위함)
     assign dist_IDLE = (U_ULTRASONIC.current_state == U_ULTRASONIC.IDLE) ? 1'b1 : 1'b0;
 
+    // LED 디버깅 개선 - 각 신호 상태 표시
     assign led = is_ultrasonic_mode ? 
              {
-               echo,              // LED[8]: 에코 신호 직접 표시
-               echo_detected,     // LED[7]: 에코 감지 여부
-               ultrasonic_btn_run,  // LED[6]: 초음파 시작 버튼
-               w_dp_done,         // LED[5]: 측정 완료 신호
-               w_msec[3:0]        // LED[4:1]: 실제 측정된 거리
+               echo,                // LED[8]: 에코 신호 상태
+               btn_run,             // LED[7]: 버튼 입력 상태
+               btn_start_signal,    // LED[6]: 시작 신호 상태
+               trigger,             // LED[5]: 트리거 신호 상태
+               w_msec[3:0]          // LED[4:1]: 측정된 거리
              } :
              // 온습도 모드일 때 DUT 상태 표시
              {
@@ -376,14 +404,13 @@ module top_stopwatch (
              };
 
 endmodule
-
 //     input reset,
 //     input btn_run,  // 좌측 버튼 - 스톱워치 실행/정지/시 설정
 //     // input btn_start,
 //     input btn_clear,  // 우측 버튼 - 스톱워치 초기화
 //     // input btn_sec,  // 아래쪽 버튼 - 초 설정 (시계 모드) - 사용하지 않음
 //     // input btn_min,  // 위쪽 버튼 - 분 설정 (시계 모드) - 사용하지 않음
-    
+
 //     input ultrasonic_mode_btn,  // XDC에 매핑된 초음파 모드 버튼 (T18)
 //     input temp_humid_mode_btn,  // XDC에 매핑된 온습도 모드 버튼 (W19)
 //     input [3:0] hw_sw,  // 하드웨어 스위치 입력 (4비트로 확장)
@@ -409,7 +436,7 @@ endmodule
 
 //     // 스톱워치 제어 신호
 //     wire w_run, w_clear;
-    
+
 //     // 시간 데이터 신호들 (스톱워치와 시계)
 //     wire [6:0] s_msec, c_msec, disp_msec;
 //     wire [5:0] s_sec, s_min, c_sec, c_min, disp_sec, disp_min;
@@ -448,7 +475,7 @@ endmodule
 //     // 에코 신호 모니터링
 //     reg echo_detected;           // 에코 신호가 감지되었는지 기록
 //     reg [25:0] echo_mon_counter; // 에코 모니터링 타이머
-    
+
 //     // 에코 신호 확인 로직 추가
 //     always @(posedge clk or posedge reset) begin
 //         if (reset) begin
@@ -459,7 +486,7 @@ endmodule
 //             if (echo) begin
 //                 echo_detected <= 1'b1;
 //             end
-            
+
 //             // 주기적으로 에코 감지 상태 초기화 (3초마다)
 //             if (echo_mon_counter >= 26'd300000000) begin
 //                 echo_mon_counter <= 26'd0;
@@ -475,18 +502,18 @@ endmodule
 
 //     // btn_start 디바운싱 모듈 인스턴스 추가
 //     wire debounced_btn_start;
-    
+
 //     btn_start_debounce U_Btn_DB_START (
 //         .clk(clk),
 //         .reset(reset),
 //         .btn_start_in(btn_start),         // 입력은 T18에 매핑된 btn_start
 //         .btn_start_out(debounced_btn_start)  // 디바운싱된 출력
 //     );
-    
+
 //     // 초음파 자동 측정을 위한 카운터 추가
 //     reg [27:0] ultrasonic_auto_counter;
 //     reg ultrasonic_auto_trigger;
-    
+
 //     always @(posedge clk or posedge reset) begin
 //         if (reset) begin
 //             ultrasonic_auto_counter <= 28'd0;
@@ -528,15 +555,15 @@ endmodule
 
 //     // 초음파 버튼 시작 신호 - 디바운싱된 btn_start 사용
 //     wire ultrasonic_btn_start;
-    
+
 //     // 첫 번째 코드처럼 수정: 디바운싱된 버튼 직접 사용하여 안정성 개선
 //     assign ultrasonic_btn_start = is_ultrasonic_mode ? debounced_btn_start : 1'b0;
-    
+
 //     // 더 안정적인 초음파 값 표시를 위한 개선된 레지스터 추가
 //     reg [6:0] ultrasonic_value;
 //     reg ultrasonic_value_valid;
 //     reg [25:0] display_hold_counter;
-    
+
 //     always @(posedge clk or posedge reset) begin
 //         if (reset) begin
 //             ultrasonic_value <= 7'd0;  // 초기값 0으로 설정
@@ -564,10 +591,10 @@ endmodule
 //             ultrasonic_value_valid <= 1'b0;
 //         end
 //     end
-    
+
 //     // 센서 데이터 표시용 MUX
 //     wire [7:0] display_sensor_data;
-    
+
 //     // 첫 번째 코드와 같이 수정: 항상 현재 측정된 값 표시
 //     assign display_sensor_data = is_ultrasonic_mode ? 
 //                                {1'b0, ultrasonic_value} :  
@@ -713,7 +740,7 @@ endmodule
 //         .stop_out(stop_out),
 //         .read(read)
 //     );
-    
+
 //     // 디스플레이 멀티플렉서
 //     display_mux U_DISPLAY_MUX (
 //         .sw_mode(is_clock_mode),
